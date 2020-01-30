@@ -217,7 +217,6 @@ StreamBuilder<List<StopWatchRecord>>(
   builder: (context, snap) {
     final value = snap.data;
     return ListView.builder(
-      controller: _scrollController,
       scrollDirection: Axis.vertical,
       itemBuilder: (BuildContext context, int index) {
         final data = value[index];
