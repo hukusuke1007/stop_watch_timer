@@ -4,7 +4,10 @@ This is Stop Watch Timer.
 
 [https://pub.dev/packages/stop_watch_timer](https://pub.dev/packages/stop_watch_timer)
 
-<img src="./screen.gif" width="300">
+![demo](./screen.gif)
+
+
+
 
 ## Example code
 See the example directory for a complete sample app using stop_watch_timer.
@@ -73,7 +76,7 @@ _stopWatchTimer.lap();
 ```
 
 
-Display time formatted stop watch. Using function of "rawTime" and "getDisplayTime".
+Display time formatted stop watch. It's using function of "rawTime" and "getDisplayTime".
 
 ```dart
 StreamBuilder<int>(
@@ -113,7 +116,7 @@ StreamBuilder<int>(
 ),
 ```
 
-Notify from "secondTime" every second.
+If listen "secondTime", notify every second.
 
 ```dart
 StreamBuilder<int>(
@@ -160,7 +163,7 @@ StreamBuilder<int>(
 ),
 ```
 
-Notify from "minuteTime" every minute.
+If listen "minuteTime", notify every minute.
 
 ```dart
 StreamBuilder<int>(
@@ -207,7 +210,7 @@ StreamBuilder<int>(
 ),
 ```
 
-Notify lap time.
+If listen "records", notify lap time.
 
 
 ```dart
