@@ -4,7 +4,7 @@ This is Stop Watch Timer.
 
 [https://pub.dev/packages/stop_watch_timer](https://pub.dev/packages/stop_watch_timer)
 
-<img src="./screen.gif" width="300">
+![demo](./demo.gif)
 
 ## Example code
 See the example directory for a complete sample app using stop_watch_timer.
