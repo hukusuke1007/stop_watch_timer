@@ -25,7 +25,6 @@ class _MyAppState extends State<MyApp> {
     await _stopWatchTimer.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -108,7 +107,7 @@ class _MyAppState extends State<MyApp> {
                                   child: Text(
                                     value.toString(),
                                     style: TextStyle(
-                                        fontSize: 40,
+                                        fontSize: 30,
                                         fontFamily: 'Helvetica',
                                         fontWeight: FontWeight.bold
                                     ),
@@ -154,7 +153,7 @@ class _MyAppState extends State<MyApp> {
                                 child: Text(
                                   value.toString(),
                                   style: TextStyle(
-                                      fontSize: 40,
+                                      fontSize: 30,
                                       fontFamily: 'Helvetica',
                                       fontWeight: FontWeight.bold
                                   ),
@@ -170,7 +169,7 @@ class _MyAppState extends State<MyApp> {
               ),
               /// Lap time.
               Container(
-                height: 300,
+                height: 120,
                 margin: const EdgeInsets.all(8),
                 child: StreamBuilder<List<StopWatchRecord>>(
                   stream: _stopWatchTimer.records,
