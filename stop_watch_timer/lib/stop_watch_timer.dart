@@ -1,5 +1,18 @@
 import 'dart:async';
 
+class StopWatchRecord {
+  StopWatchRecord({
+    this.rawValue,
+    this.minute,
+    this.second,
+    this.displayTime,
+  });
+  int rawValue;
+  int minute;
+  int second;
+  String displayTime;
+}
+
 class StopWatchTimer {
   StopWatchTimer() {
     _configure();
@@ -16,22 +29,30 @@ class StopWatchTimer {
   final StreamController<int> _minuteTimeController = StreamController<int>();
   Stream<int> get minuteTime => _minuteTimeController.stream;
 
+  final StreamController<List<StopWatchRecord>> _recordsController = StreamController<List<StopWatchRecord>>();
+  Stream<List<StopWatchRecord>> get records => _recordsController.stream;
+
   Timer _timer;
   int _startTime = 0;
   int _stopTime = 0;
   int _second;
   int _minute;
+  int _rawValue = 0;
+  List<StopWatchRecord> _records = [];
 
   Future dispose() async {
     await _elapsedTime.close();
     await _rawTimeController.close();
     await _secondTimeController.close();
     await _minuteTimeController.close();
+    await _recordsController.close();
   }
 
   void start() {
-    _startTime = DateTime.now().millisecondsSinceEpoch;
-    _timer = Timer.periodic(const Duration(milliseconds: 1), _handle);
+    if (_timer == null || !_timer.isActive) {
+      _startTime = DateTime.now().millisecondsSinceEpoch;
+      _timer = Timer.periodic(const Duration(milliseconds: 1), _handle);
+    }
   }
 
   void stop() {
@@ -51,7 +72,22 @@ class StopWatchTimer {
     _stopTime = 0;
     _second = null;
     _minute = null;
+    _records = [];
+    _rawValue = 0;
+    _recordsController.add(_records);
     _elapsedTime.add(0);
+  }
+
+  void lap() {
+    if (_timer != null && _timer.isActive) {
+      _records.add(StopWatchRecord(
+        rawValue: _rawValue,
+        minute: _getMinute(_rawValue),
+        second: _getSecond(_rawValue),
+        displayTime: getDisplayTime(_rawValue),
+      ));
+      _recordsController.add(_records);
+    }
   }
 
   String getDisplayTime(int value, {
@@ -87,8 +123,10 @@ class StopWatchTimer {
   }
 
   Future _configure() async {
-    _elapsedTime.add(0);
+//    _recordsController.add([]);
+//    _elapsedTime.add(0);
     _elapsedTime.stream.listen((value) {
+      _rawValue = value;
       _rawTimeController.add(value);
       final latestSecond = _getSecond(value);
       if (_second != latestSecond) {
