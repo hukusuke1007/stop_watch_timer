@@ -1,3 +1,5 @@
-## 0.1.0
+## 0.1.0+1
+Updated gif.
 
-First release
+## 0.1.0
+First release.
