@@ -26,7 +26,6 @@ dependencies:
 ```dart
 import 'package:stop_watch_timer/stop_watch_timer.dart';  // Import stop_watch_timer
 
-
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => _MyAppState();
@@ -54,6 +53,7 @@ class _MyAppState extends State<MyApp> {
 }
 ```
 
+To operation stop watch.
 
 ```dart
 // Start
@@ -70,8 +70,21 @@ _stopWatchTimer.reset();
 
 // Lap time
 _stopWatchTimer.lap();
+
 ```
 
+### Using callback
+
+```dart
+final _stopWatchTimer = StopWatchTimer(
+  onChange: (value) {
+    final displayTime = StopWatchTimer.getDisplayTime(value);
+    print('displayTime $displayTime');
+  }
+);
+```
+
+### Using stream
 
 Display time formatted stop watch. Using function of "rawTime" and "getDisplayTime".
 
@@ -81,7 +94,7 @@ StreamBuilder<int>(
   initialData: 0,
   builder: (context, snap) {
     final value = snap.data;
-    final displayTime = _stopWatchTimer.getDisplayTime(value);
+    final displayTime = StopWatchTimer.getDisplayTime(value);
     return Column(
       children: <Widget>[
         Padding(

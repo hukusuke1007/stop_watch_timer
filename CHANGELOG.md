@@ -1,3 +1,6 @@
+## 0.1.1
+Added function of getDisplayTimeMinute, getDisplayTimeSecond, getDisplayTimeMilliSecond. Added callback function.
+
 ## 0.1.0+5
 Updated gif.
 

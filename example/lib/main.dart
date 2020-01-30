@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
                   initialData: 0,
                   builder: (context, snap) {
                     final value = snap.data;
-                    final displayTime = _stopWatchTimer.getDisplayTime(value);
+                    final displayTime = StopWatchTimer.getDisplayTime(value);
                     return Column(
                       children: <Widget>[
                         Padding(

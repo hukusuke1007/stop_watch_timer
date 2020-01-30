@@ -14,9 +14,13 @@ class StopWatchRecord {
 }
 
 class StopWatchTimer {
-  StopWatchTimer() {
+  StopWatchTimer({
+    this.onChange,
+  }) {
     _configure();
   }
+
+  final Function(int) onChange;
 
   final StreamController<int> _elapsedTime = StreamController<int>();
 
@@ -39,6 +43,50 @@ class StopWatchTimer {
   int _minute;
   int _rawValue = 0;
   List<StopWatchRecord> _records = [];
+
+  static String getDisplayTime(int value, {
+    bool minute = true,
+    bool second = true,
+    bool milliSecond = true,
+    String minuteRightBreak = ':',
+    String secondRightBreak = '.',
+  }) {
+    final mStr = getDisplayTimeMinute(value);
+    final sStr = getDisplayTimeSecond(value);
+    final msStr = getDisplayTimeMilliSecond(value);
+    var result = '';
+    if (minute) {
+      result += '$mStr';
+    }
+    if (second) {
+      if (minute) {
+        result += minuteRightBreak;
+      }
+      result += '$sStr';
+    }
+    if (milliSecond) {
+      if (second) {
+        result += secondRightBreak;
+      }
+      result += '$msStr';
+    }
+    return result;
+  }
+
+  static String getDisplayTimeMinute(int value) {
+    final m = (value / 60000).floor();
+    return m.toString().padLeft(2, '0');
+  }
+
+  static String getDisplayTimeSecond(int value) {
+    final s = (value % 60000 / 1000).floor();
+    return s.toString().padLeft(2, '0');
+  }
+
+  static String getDisplayTimeMilliSecond(int value) {
+    final ms = (value % 1000 / 10).floor();
+    return ms.toString().padLeft(2, '0');
+  }
 
   Future dispose() async {
     await _elapsedTime.close();
@@ -90,44 +138,15 @@ class StopWatchTimer {
     }
   }
 
-  String getDisplayTime(int value, {
-    bool minute = true,
-    bool second = true,
-    bool milliSecond = true,
-    String minuteRightBreak = ':',
-    String secondRightBreak = '.',
-  }) {
-    final m = (value / 60000).floor();
-    final s = (value % 60000 / 1000).floor();
-    final ms = (value % 1000 / 10).floor();
-    final mStr = m.toString().padLeft(2, '0');
-    final sStr = s.toString().padLeft(2, '0');
-    final msStr = ms.toString().padLeft(2, '0');
-    var result = '';
-    if (minute) {
-      result += '$mStr';
-    }
-    if (second) {
-      if (minute) {
-        result += minuteRightBreak;
-      }
-      result += '$sStr';
-    }
-    if (milliSecond) {
-      if (second) {
-        result += secondRightBreak;
-      }
-      result += '$msStr';
-    }
-    return result;
-  }
+  bool isRunning() => _timer != null ? _timer.isActive : false;
 
   Future _configure() async {
-//    _recordsController.add([]);
-//    _elapsedTime.add(0);
     _elapsedTime.stream.listen((value) {
       _rawValue = value;
       _rawTimeController.add(value);
+      if (onChange != null) {
+        onChange(value);
+      }
       final latestSecond = _getSecond(value);
       if (_second != latestSecond) {
         _secondTimeController.add(latestSecond);
@@ -142,7 +161,8 @@ class StopWatchTimer {
   }
 
   int _getMinute(int value) => (value / 60000).floor();
-  int _getSecond(int value) => (value / 1000).floor();
-  void _handle(Timer timer) => _elapsedTime.add(DateTime.now().millisecondsSinceEpoch - _startTime + _stopTime);
 
+  int _getSecond(int value) => (value / 1000).floor();
+
+  void _handle(Timer timer) => _elapsedTime.add(DateTime.now().millisecondsSinceEpoch - _startTime + _stopTime);
 }
