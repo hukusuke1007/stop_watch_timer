@@ -1,3 +1,6 @@
+## 0.2.0
+Refactoring stream. Added RxDart.
+
 ## 0.1.2+1
 Updated document.
 

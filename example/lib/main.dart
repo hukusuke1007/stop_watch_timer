@@ -42,7 +42,7 @@ class _MyAppState extends State<MyApp> {
                 padding: const EdgeInsets.only(bottom: 0),
                 child: StreamBuilder<int>(
                   stream: _stopWatchTimer.rawTime,
-                  initialData: 0,
+                  initialData: _stopWatchTimer.rawTime.value,
                   builder: (context, snap) {
                     final value = snap.data;
                     final displayTime = StopWatchTimer.getDisplayTime(value);
@@ -80,7 +80,7 @@ class _MyAppState extends State<MyApp> {
                 padding: const EdgeInsets.only(bottom: 0),
                 child: StreamBuilder<int>(
                   stream: _stopWatchTimer.minuteTime,
-                  initialData: 0,
+                  initialData: _stopWatchTimer.minuteTime.value,
                   builder: (context, snap) {
                     final value = snap.data;
                     print('Listen every minute. $value');
@@ -126,7 +126,7 @@ class _MyAppState extends State<MyApp> {
                 padding: const EdgeInsets.only(bottom: 0),
                 child: StreamBuilder<int>(
                   stream: _stopWatchTimer.secondTime,
-                  initialData: 0,
+                  initialData: _stopWatchTimer.secondTime.value,
                   builder: (context, snap) {
                     final value = snap.data;
                     print('Listen every second. $value');
@@ -173,7 +173,7 @@ class _MyAppState extends State<MyApp> {
                 margin: const EdgeInsets.all(8),
                 child: StreamBuilder<List<StopWatchRecord>>(
                   stream: _stopWatchTimer.records,
-                  initialData: const [],
+                  initialData: _stopWatchTimer.records.value,
                   builder: (context, snap) {
                     final value = snap.data;
                     if (value.isEmpty) {

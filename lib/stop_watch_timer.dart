@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:rxdart/rxdart.dart';
 
 class StopWatchRecord {
   StopWatchRecord({
@@ -26,22 +27,22 @@ class StopWatchTimer {
 
   final Function(int) onChange;
 
-  final StreamController<int> _elapsedTime = StreamController<int>();
+  final PublishSubject<int> _elapsedTime = PublishSubject<int>();
 
-  final StreamController<int> _rawTimeController = StreamController<int>();
-  Stream<int> get rawTime => _rawTimeController.stream;
+  final BehaviorSubject<int> _rawTimeController = BehaviorSubject<int>.seeded(0);
+  ValueStream<int> get rawTime => _rawTimeController;
 
-  final StreamController<int> _secondTimeController = StreamController<int>();
-  Stream<int> get secondTime => _secondTimeController.stream;
+  final BehaviorSubject<int> _secondTimeController = BehaviorSubject<int>.seeded(0);
+  ValueStream<int> get secondTime => _secondTimeController;
 
-  final StreamController<int> _minuteTimeController = StreamController<int>();
-  Stream<int> get minuteTime => _minuteTimeController.stream;
+  final BehaviorSubject<int> _minuteTimeController = BehaviorSubject<int>.seeded(0);
+  ValueStream<int> get minuteTime => _minuteTimeController;
 
-  final StreamController<List<StopWatchRecord>> _recordsController = StreamController<List<StopWatchRecord>>();
-  Stream<List<StopWatchRecord>> get records => _recordsController.stream;
+  final BehaviorSubject<List<StopWatchRecord>> _recordsController = BehaviorSubject<List<StopWatchRecord>>.seeded([]);
+  ValueStream<List<StopWatchRecord>> get records => _recordsController;
 
-  final StreamController<StopWatchExecute> _executeController = StreamController<StopWatchExecute>();
-  Stream<StopWatchExecute> get execute => _executeController.stream;
+  final PublishSubject<StopWatchExecute> _executeController = PublishSubject<StopWatchExecute>();
+  Stream<StopWatchExecute> get execute => _executeController;
   Sink<StopWatchExecute> get onExecute => _executeController.sink;
 
   Timer _timer;
@@ -49,7 +50,6 @@ class StopWatchTimer {
   int _stopTime = 0;
   int _second;
   int _minute;
-  int _rawValue = 0;
   List<StopWatchRecord> _records = [];
 
   static String getDisplayTime(int value, {
@@ -108,8 +108,7 @@ class StopWatchTimer {
   bool isRunning() => _timer != null ? _timer.isActive : false;
 
   Future _configure() async {
-    _elapsedTime.stream.listen((value) {
-      _rawValue = value;
+    _elapsedTime.listen((value) {
       _rawTimeController.add(value);
       if (onChange != null) {
         onChange(value);
@@ -126,7 +125,7 @@ class StopWatchTimer {
       }
     });
 
-    _executeController.stream
+    _executeController
         .where((value) => value != null)
         .listen((value) {
       switch (value) {
@@ -177,18 +176,18 @@ class StopWatchTimer {
     _second = null;
     _minute = null;
     _records = [];
-    _rawValue = 0;
     _recordsController.add(_records);
     _elapsedTime.add(0);
   }
 
   void _lap() {
     if (_timer != null && _timer.isActive) {
+      final rawValue = _rawTimeController.value;
       _records.add(StopWatchRecord(
-        rawValue: _rawValue,
-        minute: _getMinute(_rawValue),
-        second: _getSecond(_rawValue),
-        displayTime: getDisplayTime(_rawValue),
+        rawValue: rawValue,
+        minute: _getMinute(rawValue),
+        second: _getSecond(rawValue),
+        displayTime: getDisplayTime(rawValue),
       ));
       _recordsController.add(_records);
     }
