@@ -13,6 +13,10 @@ class StopWatchRecord {
   String displayTime;
 }
 
+enum StopWatchExecute {
+  start, stop, reset, lap
+}
+
 class StopWatchTimer {
   StopWatchTimer({
     this.onChange,
@@ -35,6 +39,10 @@ class StopWatchTimer {
 
   final StreamController<List<StopWatchRecord>> _recordsController = StreamController<List<StopWatchRecord>>();
   Stream<List<StopWatchRecord>> get records => _recordsController.stream;
+
+  final StreamController<StopWatchExecute> _executeController = StreamController<StopWatchExecute>();
+  Stream<StopWatchExecute> get execute => _executeController.stream;
+  Sink<StopWatchExecute> get onExecute => _executeController.sink;
 
   Timer _timer;
   int _startTime = 0;
@@ -94,48 +102,7 @@ class StopWatchTimer {
     await _secondTimeController.close();
     await _minuteTimeController.close();
     await _recordsController.close();
-  }
-
-  void start() {
-    if (_timer == null || !_timer.isActive) {
-      _startTime = DateTime.now().millisecondsSinceEpoch;
-      _timer = Timer.periodic(const Duration(milliseconds: 1), _handle);
-    }
-  }
-
-  void stop() {
-    if (_timer != null && _timer.isActive) {
-      _timer.cancel();
-      _timer = null;
-      _stopTime += DateTime.now().millisecondsSinceEpoch - _startTime;
-    }
-  }
-
-  void reset() {
-    if (_timer != null && _timer.isActive) {
-      _timer.cancel();
-      _timer = null;
-    }
-    _startTime = 0;
-    _stopTime = 0;
-    _second = null;
-    _minute = null;
-    _records = [];
-    _rawValue = 0;
-    _recordsController.add(_records);
-    _elapsedTime.add(0);
-  }
-
-  void lap() {
-    if (_timer != null && _timer.isActive) {
-      _records.add(StopWatchRecord(
-        rawValue: _rawValue,
-        minute: _getMinute(_rawValue),
-        second: _getSecond(_rawValue),
-        displayTime: getDisplayTime(_rawValue),
-      ));
-      _recordsController.add(_records);
-    }
+    await _executeController.close();
   }
 
   bool isRunning() => _timer != null ? _timer.isActive : false;
@@ -158,6 +125,25 @@ class StopWatchTimer {
         _minute = latestMinute;
       }
     });
+
+    _executeController.stream
+        .where((value) => value != null)
+        .listen((value) {
+      switch (value) {
+        case StopWatchExecute.start:
+          _start();
+          break;
+        case StopWatchExecute.stop:
+          _stop();
+          break;
+        case StopWatchExecute.reset:
+          _reset();
+          break;
+        case StopWatchExecute.lap:
+          _lap();
+          break;
+      }
+    });
   }
 
   int _getMinute(int value) => (value / 60000).floor();
@@ -165,4 +151,46 @@ class StopWatchTimer {
   int _getSecond(int value) => (value / 1000).floor();
 
   void _handle(Timer timer) => _elapsedTime.add(DateTime.now().millisecondsSinceEpoch - _startTime + _stopTime);
+
+  void _start() {
+    if (_timer == null || !_timer.isActive) {
+      _startTime = DateTime.now().millisecondsSinceEpoch;
+      _timer = Timer.periodic(const Duration(milliseconds: 1), _handle);
+    }
+  }
+
+  void _stop() {
+    if (_timer != null && _timer.isActive) {
+      _timer.cancel();
+      _timer = null;
+      _stopTime += DateTime.now().millisecondsSinceEpoch - _startTime;
+    }
+  }
+
+  void _reset() {
+    if (_timer != null && _timer.isActive) {
+      _timer.cancel();
+      _timer = null;
+    }
+    _startTime = 0;
+    _stopTime = 0;
+    _second = null;
+    _minute = null;
+    _records = [];
+    _rawValue = 0;
+    _recordsController.add(_records);
+    _elapsedTime.add(0);
+  }
+
+  void _lap() {
+    if (_timer != null && _timer.isActive) {
+      _records.add(StopWatchRecord(
+        rawValue: _rawValue,
+        minute: _getMinute(_rawValue),
+        second: _getSecond(_rawValue),
+        displayTime: getDisplayTime(_rawValue),
+      ));
+      _recordsController.add(_records);
+    }
+  }
 }

@@ -57,19 +57,19 @@ To operation stop watch.
 
 ```dart
 // Start
-_stopWatchTimer.start();
+_stopWatchTimer.onExecute.add(StopWatchExecute.start);
 
 
 // Stop
-_stopWatchTimer.stop();
+_stopWatchTimer.onExecute.add(StopWatchExecute.stop);
 
 
 // Reset
-_stopWatchTimer.reset();
+_stopWatchTimer.onExecute.add(StopWatchExecute.reset);
 
 
 // Lap time
-_stopWatchTimer.lap();
+_stopWatchTimer.onExecute.add(StopWatchExecute.lap);
 
 ```
 

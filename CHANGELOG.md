@@ -1,3 +1,9 @@
+## 0.1.2+1
+Updated document.
+
+## 0.1.2
+Refactoring execute.
+
 ## 0.1.1
 Added function of getDisplayTimeMinute, getDisplayTimeSecond, getDisplayTimeMilliSecond. Added callback function.
 

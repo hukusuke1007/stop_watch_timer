@@ -231,7 +231,7 @@ class _MyAppState extends State<MyApp> {
                               color: Colors.lightBlue,
                               shape: const StadiumBorder(),
                               onPressed: () async {
-                                _stopWatchTimer.start();
+                                _stopWatchTimer.onExecute.add(StopWatchExecute.start);
                               },
                               child: Text('Start', style: TextStyle(color: Colors.white),),
                             ),
@@ -243,7 +243,7 @@ class _MyAppState extends State<MyApp> {
                               color: Colors.green,
                               shape: const StadiumBorder(),
                               onPressed: () async {
-                                _stopWatchTimer.stop();
+                                _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
                               },
                               child: Text('Stop', style: TextStyle(color: Colors.white),),
                             ),
@@ -255,7 +255,7 @@ class _MyAppState extends State<MyApp> {
                               color: Colors.red,
                               shape: const StadiumBorder(),
                               onPressed: () async {
-                                _stopWatchTimer.reset();
+                                _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
                               },
                               child: Text('Reset', style: TextStyle(color: Colors.white),),
                             ),
@@ -275,7 +275,7 @@ class _MyAppState extends State<MyApp> {
                               color: Colors.deepPurpleAccent,
                               shape: const StadiumBorder(),
                               onPressed: () async {
-                                _stopWatchTimer.lap();
+                                _stopWatchTimer.onExecute.add(StopWatchExecute.lap);
                               },
                               child: Text('Lap', style: TextStyle(color: Colors.white),),
                             ),
