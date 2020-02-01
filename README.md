@@ -70,7 +70,6 @@ _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
 
 // Lap time
 _stopWatchTimer.onExecute.add(StopWatchExecute.lap);
-
 ```
 
 ### Using callback
@@ -87,6 +86,12 @@ final _stopWatchTimer = StopWatchTimer(
 ### Using stream
 
 Display time formatted stop watch. Using function of "rawTime" and "getDisplayTime".
+
+```dart
+_stopWatchTimer.rawTime.listen((value) => print('rawTime $value ${StopWatchTimer.getDisplayTime(value)}'));
+```
+
+Example code using stream builder.
 
 ```dart
 StreamBuilder<int>(
@@ -127,6 +132,12 @@ StreamBuilder<int>(
 ```
 
 Notify from "secondTime" every second.
+
+```dart
+_stopWatchTimer.secondTime.listen((value) => print('secondTime $value'));
+```
+
+Example code using stream builder.
 
 ```dart
 StreamBuilder<int>(
@@ -176,6 +187,12 @@ StreamBuilder<int>(
 Notify from "minuteTime" every minute.
 
 ```dart
+_stopWatchTimer.minuteTime.listen((value) => print('minuteTime $value'));
+```
+
+Example code using stream builder.
+
+```dart
 StreamBuilder<int>(
   stream: _stopWatchTimer.minuteTime,
   initialData: 0,
@@ -222,6 +239,11 @@ StreamBuilder<int>(
 
 Notify lap time.
 
+```dart
+_stopWatchTimer.records.listen((value) => print('records $value'));
+```
+
+Example code using stream builder.
 
 ```dart
 StreamBuilder<List<StopWatchRecord>>(
