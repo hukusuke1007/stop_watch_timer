@@ -1,4 +1,7 @@
 ## 0.2.0+1
+Deleted unnecessary files.
+
+## 0.2.0+1
 Updated document.
 
 ## 0.2.0
