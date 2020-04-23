@@ -10,7 +10,11 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
 
-  final StopWatchTimer _stopWatchTimer = StopWatchTimer();
+  final StopWatchTimer _stopWatchTimer = StopWatchTimer(
+    onChange: (value) => print('onChange $value'),
+    onChangeSecond: (value) => print('onChangeSecond $value'),
+    onChangeMinute: (value) => print('onChangeMinute $value'),
+  );
 
   final _scrollController = ScrollController();
 

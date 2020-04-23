@@ -1,3 +1,6 @@
+## 0.3.0
+Added callback function of onChangeSecond and onChangeMinute.
+
 ## 0.2.0+2
 Deleted unnecessary files.
 

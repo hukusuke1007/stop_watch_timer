@@ -21,11 +21,15 @@ enum StopWatchExecute {
 class StopWatchTimer {
   StopWatchTimer({
     this.onChange,
+    this.onChangeSecond,
+    this.onChangeMinute,
   }) {
     _configure();
   }
 
   final Function(int) onChange;
+  final Function(int) onChangeSecond;
+  final Function(int) onChangeMinute;
 
   final PublishSubject<int> _elapsedTime = PublishSubject<int>();
 
@@ -117,11 +121,17 @@ class StopWatchTimer {
       if (_second != latestSecond) {
         _secondTimeController.add(latestSecond);
         _second = latestSecond;
+        if (onChangeSecond != null) {
+          onChangeSecond(latestSecond);
+        }
       }
       final latestMinute = _getMinute(value);
       if (_minute != latestMinute) {
         _minuteTimeController.add(latestMinute);
         _minute = latestMinute;
+        if (onChangeMinute != null) {
+          onChangeMinute(latestMinute);
+        }
       }
     });
 
