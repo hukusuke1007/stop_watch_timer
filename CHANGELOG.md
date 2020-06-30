@@ -1,3 +1,6 @@
+# 0.4.0
+Updated rxdart plugin.
+
 ## 0.3.0
 Added callback function of onChangeSecond and onChangeMinute.
 

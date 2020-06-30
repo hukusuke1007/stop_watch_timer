@@ -9,7 +9,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   final StopWatchTimer _stopWatchTimer = StopWatchTimer(
     onChange: (value) => print('onChange $value'),
     onChangeSecond: (value) => print('onChangeSecond $value'),
@@ -21,7 +20,8 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    _stopWatchTimer.rawTime.listen((value) => print('rawTime $value ${StopWatchTimer.getDisplayTime(value)}'));
+    _stopWatchTimer.rawTime.listen((value) =>
+        print('rawTime $value ${StopWatchTimer.getDisplayTime(value)}'));
     _stopWatchTimer.minuteTime.listen((value) => print('minuteTime $value'));
     _stopWatchTimer.secondTime.listen((value) => print('secondTime $value'));
     _stopWatchTimer.records.listen((value) => print('records $value'));
@@ -61,10 +61,9 @@ class _MyAppState extends State<MyApp> {
                           child: Text(
                             displayTime,
                             style: TextStyle(
-                              fontSize: 40,
-                              fontFamily: 'Helvetica',
-                              fontWeight: FontWeight.bold
-                            ),
+                                fontSize: 40,
+                                fontFamily: 'Helvetica',
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                         Padding(
@@ -74,8 +73,7 @@ class _MyAppState extends State<MyApp> {
                             style: TextStyle(
                                 fontSize: 16,
                                 fontFamily: 'Helvetica',
-                                fontWeight: FontWeight.w400
-                            ),
+                                fontWeight: FontWeight.w400),
                           ),
                         ),
                       ],
@@ -83,6 +81,7 @@ class _MyAppState extends State<MyApp> {
                   },
                 ),
               ),
+
               /// Display every minute.
               Padding(
                 padding: const EdgeInsets.only(bottom: 0),
@@ -111,24 +110,24 @@ class _MyAppState extends State<MyApp> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 4),
                                   child: Text(
                                     value.toString(),
                                     style: TextStyle(
                                         fontSize: 30,
                                         fontFamily: 'Helvetica',
-                                        fontWeight: FontWeight.bold
-                                    ),
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
                               ],
-                            )
-                        ),
+                            )),
                       ],
                     );
                   },
                 ),
               ),
+
               /// Display every second.
               Padding(
                 padding: const EdgeInsets.only(bottom: 0),
@@ -141,40 +140,40 @@ class _MyAppState extends State<MyApp> {
                     return Column(
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: <Widget>[
-                              const Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 4),
-                                child: Text(
-                                  'second',
-                                  style: TextStyle(
+                            padding: const EdgeInsets.all(8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: <Widget>[
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 4),
+                                  child: Text(
+                                    'second',
+                                    style: TextStyle(
                                       fontSize: 17,
                                       fontFamily: 'Helvetica',
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 4),
-                                child: Text(
-                                  value.toString(),
-                                  style: TextStyle(
-                                      fontSize: 30,
-                                      fontFamily: 'Helvetica',
-                                      fontWeight: FontWeight.bold
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 4),
+                                  child: Text(
+                                    value.toString(),
+                                    style: TextStyle(
+                                        fontSize: 30,
+                                        fontFamily: 'Helvetica',
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ),
-                              ),
-                            ],
-                          )
-                        ),
+                              ],
+                            )),
                       ],
                     );
                   },
                 ),
               ),
+
               /// Lap time.
               Container(
                 height: 120,
@@ -191,8 +190,7 @@ class _MyAppState extends State<MyApp> {
                       _scrollController.animateTo(
                           _scrollController.position.maxScrollExtent,
                           duration: const Duration(milliseconds: 200),
-                          curve: Curves.easeOut
-                      );
+                          curve: Curves.easeOut);
                     });
                     print('Listen records. $value');
                     return ListView.builder(
@@ -207,13 +205,14 @@ class _MyAppState extends State<MyApp> {
                               child: Text(
                                 '${index + 1} ${data.displayTime}',
                                 style: TextStyle(
-                                  fontSize: 17,
-                                  fontFamily: 'Helvetica',
-                                  fontWeight: FontWeight.bold
-                                ),
+                                    fontSize: 17,
+                                    fontFamily: 'Helvetica',
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
-                            const Divider(height: 1,)
+                            const Divider(
+                              height: 1,
+                            )
                           ],
                         );
                       },
@@ -222,78 +221,94 @@ class _MyAppState extends State<MyApp> {
                   },
                 ),
               ),
+
               /// Button
               Padding(
-                padding: const EdgeInsets.all(2),
-                child: Column(
-                  children: <Widget>[
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: RaisedButton(
-                              padding: const EdgeInsets.all(4),
-                              color: Colors.lightBlue,
-                              shape: const StadiumBorder(),
-                              onPressed: () async {
-                                _stopWatchTimer.onExecute.add(StopWatchExecute.start);
-                              },
-                              child: Text('Start', style: TextStyle(color: Colors.white),),
+                  padding: const EdgeInsets.all(2),
+                  child: Column(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: RaisedButton(
+                                padding: const EdgeInsets.all(4),
+                                color: Colors.lightBlue,
+                                shape: const StadiumBorder(),
+                                onPressed: () async {
+                                  _stopWatchTimer.onExecute
+                                      .add(StopWatchExecute.start);
+                                },
+                                child: Text(
+                                  'Start',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: RaisedButton(
-                              padding: const EdgeInsets.all(4),
-                              color: Colors.green,
-                              shape: const StadiumBorder(),
-                              onPressed: () async {
-                                _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
-                              },
-                              child: Text('Stop', style: TextStyle(color: Colors.white),),
+                            Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: RaisedButton(
+                                padding: const EdgeInsets.all(4),
+                                color: Colors.green,
+                                shape: const StadiumBorder(),
+                                onPressed: () async {
+                                  _stopWatchTimer.onExecute
+                                      .add(StopWatchExecute.stop);
+                                },
+                                child: Text(
+                                  'Stop',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(12),
-                            child: RaisedButton(
-                              padding: const EdgeInsets.all(4),
-                              color: Colors.red,
-                              shape: const StadiumBorder(),
-                              onPressed: () async {
-                                _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
-                              },
-                              child: Text('Reset', style: TextStyle(color: Colors.white),),
+                            Padding(
+                              padding: const EdgeInsets.all(12),
+                              child: RaisedButton(
+                                padding: const EdgeInsets.all(4),
+                                color: Colors.red,
+                                shape: const StadiumBorder(),
+                                onPressed: () async {
+                                  _stopWatchTimer.onExecute
+                                      .add(StopWatchExecute.reset);
+                                },
+                                child: Text(
+                                  'Reset',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(0),
-                            child: RaisedButton(
-                              padding: const EdgeInsets.all(4),
-                              color: Colors.deepPurpleAccent,
-                              shape: const StadiumBorder(),
-                              onPressed: () async {
-                                _stopWatchTimer.onExecute.add(StopWatchExecute.lap);
-                              },
-                              child: Text('Lap', style: TextStyle(color: Colors.white),),
+                      Padding(
+                        padding: const EdgeInsets.all(0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(0),
+                              child: RaisedButton(
+                                padding: const EdgeInsets.all(4),
+                                color: Colors.deepPurpleAccent,
+                                shape: const StadiumBorder(),
+                                onPressed: () async {
+                                  _stopWatchTimer.onExecute
+                                      .add(StopWatchExecute.lap);
+                                },
+                                child: Text(
+                                  'Lap',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                )
-              )
+                    ],
+                  ))
             ],
           ),
         ),
