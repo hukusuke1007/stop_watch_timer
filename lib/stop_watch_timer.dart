@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:rxdart/rxdart.dart';
 
 class StopWatchRecord {
@@ -58,6 +59,7 @@ class StopWatchTimer {
   Timer _timer;
   int _startTime = 0;
   int _stopTime = 0;
+  int _presetTime = 0;
   int _second;
   int _minute;
   List<StopWatchRecord> _records = [];
@@ -112,7 +114,7 @@ class StopWatchTimer {
   }
 
   /// When finish running timer, it need to dispose.
-  Future dispose() async {
+  Future<void> dispose() async {
     await _elapsedTime.close();
     await _rawTimeController.close();
     await _secondTimeController.close();
@@ -122,7 +124,16 @@ class StopWatchTimer {
   }
 
   /// Get display millisecond time.
-  bool isRunning() => _timer != null ? _timer.isActive : false;
+  // ignore: avoid_bool_literals_in_conditional_expressions
+  bool get isRunning => _timer != null ? _timer.isActive : false;
+
+  /// Set preset time. 1000 mSec => 1 sec
+  void setPresetTime({@required int mSec}) {
+    if (_timer == null) {
+      _presetTime = mSec;
+      _elapsedTime.add(_presetTime);
+    }
+  }
 
   Future _configure() async {
     _elapsedTime.listen((value) {
@@ -170,8 +181,11 @@ class StopWatchTimer {
 
   int _getSecond(int value) => (value / 1000).floor();
 
-  void _handle(Timer timer) => _elapsedTime
-      .add(DateTime.now().millisecondsSinceEpoch - _startTime + _stopTime);
+  void _handle(Timer timer) =>
+      _elapsedTime.add(DateTime.now().millisecondsSinceEpoch -
+          _startTime +
+          _stopTime +
+          _presetTime);
 
   void _start() {
     if (_timer == null || !_timer.isActive) {
@@ -199,7 +213,7 @@ class StopWatchTimer {
     _minute = null;
     _records = [];
     _recordsController.add(_records);
-    _elapsedTime.add(0);
+    _elapsedTime.add(_presetTime);
   }
 
   void _lap() {

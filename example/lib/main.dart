@@ -25,6 +25,9 @@ class _MyAppState extends State<MyApp> {
     _stopWatchTimer.minuteTime.listen((value) => print('minuteTime $value'));
     _stopWatchTimer.secondTime.listen((value) => print('secondTime $value'));
     _stopWatchTimer.records.listen((value) => print('records $value'));
+
+    /// Can be set preset time. This case is "00:01.23".
+    // _stopWatchTimer.setPresetTime(mSec: 1234);
   }
 
   @override

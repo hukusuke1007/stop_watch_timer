@@ -278,3 +278,12 @@ StreamBuilder<List<StopWatchRecord>>(
 ),
 
 ```
+
+### Set Preset Time
+
+Can be set preset time. This case is "00:01.23".
+When timer is idle state, can be set this.
+
+```dart
+_stopWatchTimer.setPresetTime(mSec: 1234);
+```
