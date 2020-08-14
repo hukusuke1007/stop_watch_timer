@@ -79,7 +79,9 @@ final _stopWatchTimer = StopWatchTimer(
   onChange: (value) {
     final displayTime = StopWatchTimer.getDisplayTime(value);
     print('displayTime $displayTime');
-  }
+  },
+  onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
+  onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
 );
 ```
 
