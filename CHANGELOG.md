@@ -1,4 +1,7 @@
-# 0.6.0
+# 0.6.0+1
+Updated README.
+
+## 0.6.0
 Added Hours Feature.
 Added Set Preset Time Functions for Hours, Minute, Second.
 Bug fix. 

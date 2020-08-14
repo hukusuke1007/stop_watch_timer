@@ -20,7 +20,6 @@ dependencies:
   stop_watch_timer:
 ```
 
-
 ## Usage
 
 ```dart
@@ -281,11 +280,34 @@ StreamBuilder<List<StopWatchRecord>>(
 
 ```
 
+### Parsing Time
+
+Can be used [getDisplayTime](https://github.com/hukusuke1007/stop_watch_timer/blob/master/lib/stop_watch_timer.dart#L72) func. It display time like a real stopwatch timer.
+
+- Hours
+- Minute
+- Second
+- Millisecond
+
+For example, 1 hours and 30 minute and 50 second and 20 millisecond => "01:30:50.20"
+
+And can be set enable/disable display time and change split character.
+
 ### Set Preset Time
 
 Can be set preset time. This case is "00:01.23".
 When timer is idle state, can be set this.
 
 ```dart
+// Set Millisecond.
 _stopWatchTimer.setPresetTime(mSec: 1234);
+
+// Set Hours. (ex. 1 hours)
+_stopWatchTimer.setPresetHoursTime(1);
+
+// Set Minute. (ex. 30 minute)
+_stopWatchTimer.setPresetMinuteTime(30);
+
+// Set Second. (ex. 120 second)
+_stopWatchTimer.setPresetSecondTime(120);
 ```
