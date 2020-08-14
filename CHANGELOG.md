@@ -1,4 +1,9 @@
-# 0.5.0+1
+# 0.6.0
+Added Hours Feature.
+Added Set Preset Time Functions for Hours, Minute, Second.
+Bug fix. 
+
+## 0.5.0+1
 Updated plugins.
 
 ## 0.5.0

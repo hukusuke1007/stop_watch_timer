@@ -9,10 +9,13 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  final _isHours = true;
+
   final StopWatchTimer _stopWatchTimer = StopWatchTimer(
+    isLapHours: true,
     onChange: (value) => print('onChange $value'),
-    onChangeSecond: (value) => print('onChangeSecond $value'),
-    onChangeMinute: (value) => print('onChangeMinute $value'),
+    onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
+    onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
   );
 
   final _scrollController = ScrollController();
@@ -56,14 +59,15 @@ class _MyAppState extends State<MyApp> {
                   initialData: _stopWatchTimer.rawTime.value,
                   builder: (context, snap) {
                     final value = snap.data;
-                    final displayTime = StopWatchTimer.getDisplayTime(value);
+                    final displayTime =
+                        StopWatchTimer.getDisplayTime(value, hours: _isHours);
                     return Column(
                       children: <Widget>[
                         Padding(
                           padding: const EdgeInsets.all(8),
                           child: Text(
                             displayTime,
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 40,
                                 fontFamily: 'Helvetica',
                                 fontWeight: FontWeight.bold),
@@ -73,7 +77,7 @@ class _MyAppState extends State<MyApp> {
                           padding: const EdgeInsets.all(8),
                           child: Text(
                             value.toString(),
-                            style: TextStyle(
+                            style: const TextStyle(
                                 fontSize: 16,
                                 fontFamily: 'Helvetica',
                                 fontWeight: FontWeight.w400),
@@ -117,7 +121,7 @@ class _MyAppState extends State<MyApp> {
                                       const EdgeInsets.symmetric(horizontal: 4),
                                   child: Text(
                                     value.toString(),
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         fontSize: 30,
                                         fontFamily: 'Helvetica',
                                         fontWeight: FontWeight.bold),
@@ -207,7 +211,7 @@ class _MyAppState extends State<MyApp> {
                               padding: const EdgeInsets.all(8),
                               child: Text(
                                 '${index + 1} ${data.displayTime}',
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 17,
                                     fontFamily: 'Helvetica',
                                     fontWeight: FontWeight.bold),
@@ -227,91 +231,160 @@ class _MyAppState extends State<MyApp> {
 
               /// Button
               Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: Column(
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: RaisedButton(
-                                padding: const EdgeInsets.all(4),
-                                color: Colors.lightBlue,
-                                shape: const StadiumBorder(),
-                                onPressed: () async {
-                                  _stopWatchTimer.onExecute
-                                      .add(StopWatchExecute.start);
-                                },
-                                child: Text(
-                                  'Start',
-                                  style: TextStyle(color: Colors.white),
-                                ),
+                padding: const EdgeInsets.all(2),
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: RaisedButton(
+                              padding: const EdgeInsets.all(4),
+                              color: Colors.lightBlue,
+                              shape: const StadiumBorder(),
+                              onPressed: () async {
+                                _stopWatchTimer.onExecute
+                                    .add(StopWatchExecute.start);
+                              },
+                              child: const Text(
+                                'Start',
+                                style: TextStyle(color: Colors.white),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: RaisedButton(
-                                padding: const EdgeInsets.all(4),
-                                color: Colors.green,
-                                shape: const StadiumBorder(),
-                                onPressed: () async {
-                                  _stopWatchTimer.onExecute
-                                      .add(StopWatchExecute.stop);
-                                },
-                                child: Text(
-                                  'Stop',
-                                  style: TextStyle(color: Colors.white),
-                                ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: RaisedButton(
+                              padding: const EdgeInsets.all(4),
+                              color: Colors.green,
+                              shape: const StadiumBorder(),
+                              onPressed: () async {
+                                _stopWatchTimer.onExecute
+                                    .add(StopWatchExecute.stop);
+                              },
+                              child: const Text(
+                                'Stop',
+                                style: TextStyle(color: Colors.white),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: RaisedButton(
-                                padding: const EdgeInsets.all(4),
-                                color: Colors.red,
-                                shape: const StadiumBorder(),
-                                onPressed: () async {
-                                  _stopWatchTimer.onExecute
-                                      .add(StopWatchExecute.reset);
-                                },
-                                child: Text(
-                                  'Reset',
-                                  style: TextStyle(color: Colors.white),
-                                ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: RaisedButton(
+                              padding: const EdgeInsets.all(4),
+                              color: Colors.red,
+                              shape: const StadiumBorder(),
+                              onPressed: () async {
+                                _stopWatchTimer.onExecute
+                                    .add(StopWatchExecute.reset);
+                              },
+                              child: const Text(
+                                'Reset',
+                                style: TextStyle(color: Colors.white),
                               ),
                             ),
-                          ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(0).copyWith(right: 8),
+                            child: RaisedButton(
+                              padding: const EdgeInsets.all(4),
+                              color: Colors.deepPurpleAccent,
+                              shape: const StadiumBorder(),
+                              onPressed: () async {
+                                _stopWatchTimer.onExecute
+                                    .add(StopWatchExecute.lap);
+                              },
+                              child: const Text(
+                                'Lap',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: RaisedButton(
+                              padding: const EdgeInsets.all(4),
+                              color: Colors.pinkAccent,
+                              shape: const StadiumBorder(),
+                              onPressed: () async {
+                                _stopWatchTimer.setPresetHoursTime(1);
+                              },
+                              child: const Text(
+                                'Set Hours',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: RaisedButton(
+                              padding: const EdgeInsets.all(4),
+                              color: Colors.pinkAccent,
+                              shape: const StadiumBorder(),
+                              onPressed: () async {
+                                _stopWatchTimer.setPresetMinuteTime(59);
+                              },
+                              child: const Text(
+                                'Set Minute',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4),
+                            child: RaisedButton(
+                              padding: const EdgeInsets.all(4),
+                              color: Colors.pinkAccent,
+                              shape: const StadiumBorder(),
+                              onPressed: () async {
+                                _stopWatchTimer.setPresetSecondTime(59);
+                              },
+                              child: const Text(
+                                'Set Second',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: RaisedButton(
+                        padding: const EdgeInsets.all(4),
+                        color: Colors.pinkAccent,
+                        shape: const StadiumBorder(),
+                        onPressed: () async {
+                          _stopWatchTimer.setPresetTime(mSec: 3599 * 1000);
+                        },
+                        child: const Text(
+                          'Set PresetTime',
+                          style: TextStyle(color: Colors.white),
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.all(0),
-                              child: RaisedButton(
-                                padding: const EdgeInsets.all(4),
-                                color: Colors.deepPurpleAccent,
-                                shape: const StadiumBorder(),
-                                onPressed: () async {
-                                  _stopWatchTimer.onExecute
-                                      .add(StopWatchExecute.lap);
-                                },
-                                child: Text(
-                                  'Lap',
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ))
+                    ),
+                  ],
+                ),
+              )
             ],
           ),
         ),
