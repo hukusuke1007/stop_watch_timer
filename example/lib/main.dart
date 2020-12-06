@@ -58,7 +58,7 @@ class _MyAppState extends State<MyApp> {
                   stream: _stopWatchTimer.rawTime,
                   initialData: _stopWatchTimer.rawTime.value,
                   builder: (context, snap) {
-                    final value = snap.data;
+                    final value = snap.data!;
                     final displayTime =
                         StopWatchTimer.getDisplayTime(value, hours: _isHours);
                     return Column(
@@ -167,10 +167,11 @@ class _MyAppState extends State<MyApp> {
                                       const EdgeInsets.symmetric(horizontal: 4),
                                   child: Text(
                                     value.toString(),
-                                    style: TextStyle(
-                                        fontSize: 30,
-                                        fontFamily: 'Helvetica',
-                                        fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                      fontSize: 30,
+                                      fontFamily: 'Helvetica',
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -189,7 +190,7 @@ class _MyAppState extends State<MyApp> {
                   stream: _stopWatchTimer.records,
                   initialData: _stopWatchTimer.records.value,
                   builder: (context, snap) {
-                    final value = snap.data;
+                    final value = snap.data!;
                     if (value.isEmpty) {
                       return Container();
                     }
