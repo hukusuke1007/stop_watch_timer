@@ -1,4 +1,7 @@
-# 0.7.0-nullsafety.0
+# 0.8.0-nullsafety.0
+Changed version.
+
+## 0.7.0-nullsafety.0
 Migrate this package to null safety.
 Sdk constraints: >=2.12.0-0 <3.0.0 based on beta release guidelines.
 
