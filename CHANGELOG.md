@@ -1,4 +1,7 @@
-# 0.6.0+1
+# 0.7.0
+Update Plugins
+
+## 0.6.0+1
 Updated README.
 
 ## 0.6.0
