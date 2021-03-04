@@ -1,4 +1,7 @@
-# 0.8.0-nullsafety.0
+# 1.0.0
+Updated rxdart plugin.
+
+## 0.8.0-nullsafety.0
 Changed version.
 
 ## 0.7.0-nullsafety.0
