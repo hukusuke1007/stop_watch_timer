@@ -20,7 +20,9 @@ dependencies:
   stop_watch_timer:
 ```
 
-## StopWatchMode
+## Features
+
+This is StopWatchMode.
 
 - CountUp
 - CountDown
@@ -30,7 +32,7 @@ dependencies:
 This is default mode. If you' d like to set it explicitly, set StopWatchMode.countUp to mode. 
 
 ```dart
-final StopWatchTimer _stopWatchTimer = StopWatchTimer(
+final stopWatchTimer = StopWatchTimer(
   mode: StopWatchMode.countUp,
   onChange: (value) => print('onChange $value'),
   onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
@@ -45,9 +47,9 @@ final StopWatchTimer _stopWatchTimer = StopWatchTimer(
 Can be set StopWatchMode.countDown mode and preset milli second.
 
 ```dart
-final StopWatchTimer _stopWatchTimer = StopWatchTimer(
+final stopWatchTimer = StopWatchTimer(
   mode: StopWatchMode.countDown,
-  presetMillisecond: StopWatchTimer.getMilliSecFromMinute(1), // millisecond => hour.
+  presetMillisecond: StopWatchTimer.getMilliSecFromMinute(1), // millisecond => minute.
   onChange: (value) => print('onChange $value'),
   onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
   onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
@@ -59,13 +61,13 @@ final StopWatchTimer _stopWatchTimer = StopWatchTimer(
 This is  helper functions for presetTime.
 
 ```dart
-/// Get milli second from hour
+/// Get millisecond from hour
 final value = StopWatchTimer.getMilliSecFromHour(1); 
 
-/// Get milli second from minute
+/// Get millisecond from minute
 final value = StopWatchTimer.getMilliSecFromMinute(60);
 
-/// Get milli second from second
+/// Get millisecond from second
 final value = StopWatchTimer.getMilliSecFromSecond(60 * 60);
 ```
 

@@ -1,4 +1,7 @@
-# 1.1.0
+# 1.1.0+1
+Modified README.
+
+## 1.1.0
 Added count down mode.
 
 ## 1.0.0
