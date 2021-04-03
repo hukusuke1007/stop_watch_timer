@@ -233,9 +233,12 @@ class StopWatchTimer {
 
   /// Set preset time. 1000 mSec => 1 sec
   void setPresetTime({required int mSec}) {
-    if (_timer == null) {
+    if (_timer == null && _stopTime == 0) {
       _presetTime = mSec;
       _elapsedTime.add(_presetTime);
+    } else {
+      print(
+          'Can be not set preset time because of timer is not reset. please reset timer.');
     }
   }
 
