@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:rxdart/rxdart.dart';
 
+/// StopWatchRecord
 class StopWatchRecord {
   StopWatchRecord({
     this.rawValue,
@@ -20,18 +22,67 @@ class StopWatchRecord {
 /// StopWatch ExecuteType
 enum StopWatchExecute { start, stop, reset, lap }
 
+/// StopWatchMode
+enum StopWatchMode { normal, countDown }
+
 /// StopWatchTimer
 class StopWatchTimer {
   StopWatchTimer({
     this.isLapHours = true,
+    this.mode = StopWatchMode.normal,
+    int presetMilliSecond = 0,
     this.onChange,
     this.onChangeRawSecond,
     this.onChangeRawMinute,
   }) {
-    _configure();
+    _presetTime = presetMilliSecond;
+
+    _elapsedTime.listen((value) {
+      _rawTimeController.add(value);
+      if (onChange != null) {
+        onChange!(value);
+      }
+      final latestSecond = getRawSecond(value);
+      if (_second != latestSecond) {
+        _secondTimeController.add(latestSecond);
+        _second = latestSecond;
+        if (onChangeRawSecond != null) {
+          onChangeRawSecond!(latestSecond);
+        }
+      }
+      final latestMinute = getRawMinute(value);
+      if (_minute != latestMinute) {
+        _minuteTimeController.add(latestMinute);
+        _minute = latestMinute;
+        if (onChangeRawMinute != null) {
+          onChangeRawMinute!(latestMinute);
+        }
+      }
+    });
+    _executeController.listen((value) {
+      switch (value) {
+        case StopWatchExecute.start:
+          _start();
+          break;
+        case StopWatchExecute.stop:
+          _stop();
+          break;
+        case StopWatchExecute.reset:
+          _reset();
+          break;
+        case StopWatchExecute.lap:
+          _lap();
+          break;
+      }
+    });
+
+    if (mode == StopWatchMode.countDown) {
+      _elapsedTime.add(_presetTime);
+    }
   }
 
   final bool isLapHours;
+  final StopWatchMode mode;
   final Function(int)? onChange;
   final Function(int)? onChangeRawSecond;
   final Function(int)? onChangeRawMinute;
@@ -62,7 +113,7 @@ class StopWatchTimer {
   Timer? _timer;
   int _startTime = 0;
   int _stopTime = 0;
-  int _presetTime = 0;
+  late int _presetTime;
   int? _second;
   int? _minute;
   List<StopWatchRecord> _records = [];
@@ -134,16 +185,27 @@ class StopWatchTimer {
   }
 
   /// Get Raw Hours.
-  static int getRawHours(int value) => (value / (3600 * 1000)).floor();
+  static int getRawHours(int milliSecond) =>
+      (milliSecond / (3600 * 1000)).floor();
 
   /// Get Raw Minute. 0 ~ 59. 1 hours = 0.
-  static int getMinute(int value) => (value / (60 * 1000) % 60).floor();
+  static int getMinute(int milliSecond) =>
+      (milliSecond / (60 * 1000) % 60).floor();
 
   /// Get Raw Minute
-  static int getRawMinute(int value) => (value / 60000).floor();
+  static int getRawMinute(int milliSecond) => (milliSecond / 60000).floor();
 
   /// Get Raw Second
-  static int getRawSecond(int value) => (value / 1000).floor();
+  static int getRawSecond(int milliSecond) => (milliSecond / 1000).floor();
+
+  /// Get milli second from hour
+  static int getMilliSecFromHour(int hour) => (hour * (3600 * 1000)).floor();
+
+  /// Get milli second from minute
+  static int getMilliSecFromMinute(int minute) => (minute * 60000).floor();
+
+  /// Get milli second from second
+  static int getMilliSecFromSecond(int second) => (second * 1000).floor();
 
   /// When finish running timer, it need to dispose.
   Future<void> dispose() async {
@@ -177,53 +239,28 @@ class StopWatchTimer {
     }
   }
 
-  Future _configure() async {
-    _elapsedTime.listen((value) {
-      _rawTimeController.add(value);
-      if (onChange != null) {
-        onChange!(value);
-      }
-      final latestSecond = getRawSecond(value);
-      if (_second != latestSecond) {
-        _secondTimeController.add(latestSecond);
-        _second = latestSecond;
-        if (onChangeRawSecond != null) {
-          onChangeRawSecond!(latestSecond);
-        }
-      }
-      final latestMinute = getRawMinute(value);
-      if (_minute != latestMinute) {
-        _minuteTimeController.add(latestMinute);
-        _minute = latestMinute;
-        if (onChangeRawMinute != null) {
-          onChangeRawMinute!(latestMinute);
-        }
-      }
-    });
-
-    _executeController.where((value) => value != null).listen((value) {
-      switch (value) {
-        case StopWatchExecute.start:
-          _start();
-          break;
-        case StopWatchExecute.stop:
+  void _handle(Timer timer) {
+    switch (mode) {
+      case StopWatchMode.normal:
+        final time = DateTime.now().millisecondsSinceEpoch -
+            _startTime +
+            _stopTime +
+            _presetTime;
+        _elapsedTime.add(time);
+        break;
+      case StopWatchMode.countDown:
+        final time = max(
+          _presetTime -
+              (DateTime.now().millisecondsSinceEpoch - _startTime + _stopTime),
+          0,
+        );
+        _elapsedTime.add(time);
+        if (time == 0) {
           _stop();
-          break;
-        case StopWatchExecute.reset:
-          _reset();
-          break;
-        case StopWatchExecute.lap:
-          _lap();
-          break;
-      }
-    });
+        }
+        break;
+    }
   }
-
-  void _handle(Timer timer) =>
-      _elapsedTime.add(DateTime.now().millisecondsSinceEpoch -
-          _startTime +
-          _stopTime +
-          _presetTime);
 
   void _start() {
     if (_timer == null || !_timer!.isActive) {
