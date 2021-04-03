@@ -44,7 +44,7 @@ final stopWatchTimer = StopWatchTimer(
 
 ### CountDown
 
-Can be set StopWatchMode.countDown mode and preset milli second.
+Can be set StopWatchMode.countDown mode and preset millisecond.
 
 ```dart
 final stopWatchTimer = StopWatchTimer(
