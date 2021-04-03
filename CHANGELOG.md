@@ -1,4 +1,7 @@
-# 1.0.0
+# 1.1.0
+Added count down mode.
+
+## 1.0.0
 Updated rxdart plugin.
 
 ## 0.8.0-nullsafety.0

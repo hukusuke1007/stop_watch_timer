@@ -20,6 +20,55 @@ dependencies:
   stop_watch_timer:
 ```
 
+## StopWatchMode
+
+- CountUp
+- CountDown
+
+### CountUp
+
+This is default mode. If you' d like to set it explicitly, set StopWatchMode.countUp to mode. 
+
+```dart
+final StopWatchTimer _stopWatchTimer = StopWatchTimer(
+  mode: StopWatchMode.countUp,
+  onChange: (value) => print('onChange $value'),
+  onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
+  onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
+);
+```
+
+[example code](https://github.com/hukusuke1007/stop_watch_timer/tree/master/example/lib/count_up_timer_page.dart)
+
+### CountDown
+
+Can be set StopWatchMode.countDown mode and preset milli second.
+
+```dart
+final StopWatchTimer _stopWatchTimer = StopWatchTimer(
+  mode: StopWatchMode.countDown,
+  presetMillisecond: StopWatchTimer.getMilliSecFromMinute(1), // millisecond => hour.
+  onChange: (value) => print('onChange $value'),
+  onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
+  onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
+);
+```
+
+[example code](https://github.com/hukusuke1007/stop_watch_timer/tree/master/example/lib/count_down_timer_page.dart)
+
+This is  helper functions for presetTime.
+
+```dart
+/// Get milli second from hour
+final value = StopWatchTimer.getMilliSecFromHour(1); 
+
+/// Get milli second from minute
+final value = StopWatchTimer.getMilliSecFromMinute(60);
+
+/// Get milli second from second
+final value = StopWatchTimer.getMilliSecFromSecond(60 * 60);
+```
+
 ## Usage
 
 ```dart
@@ -296,12 +345,15 @@ And can be set enable/disable display time and change split character.
 ### Set Preset Time
 
 Can be set preset time. This case is "00:01.23".
-When timer is idle state, can be set this.
 
 ```dart
 // Set Millisecond.
 _stopWatchTimer.setPresetTime(mSec: 1234);
+```
 
+When timer is idle state, can be set this.
+
+```dart
 // Set Hours. (ex. 1 hours)
 _stopWatchTimer.setPresetHoursTime(1);
 

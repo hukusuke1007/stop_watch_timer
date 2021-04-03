@@ -1,6 +1,6 @@
 name: stop_watch_timer
 description: This is Stop Watch Timer for flutter plugin. It easily create application of stop watch for sports if use this plugin.
-version: 1.0.0
+version: 1.1.0
 repository: https://github.com/hukusuke1007/stop_watch_timer
 homepage: https://github.com/hukusuke1007/stop_watch_timer
 
