@@ -19,7 +19,7 @@ class _State extends State<CountDownTimerPage> {
 
   final StopWatchTimer _stopWatchTimer = StopWatchTimer(
     mode: StopWatchMode.countDown,
-    presetMilliSecond: StopWatchTimer.getMilliSecFromMinute(1),
+    presetMillisecond: StopWatchTimer.getMilliSecFromMinute(1),
     onChange: (value) => print('onChange $value'),
     onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
     onChangeRawMinute: (value) => print('onChangeRawMinute $value'),

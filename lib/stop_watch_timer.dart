@@ -23,19 +23,19 @@ class StopWatchRecord {
 enum StopWatchExecute { start, stop, reset, lap }
 
 /// StopWatchMode
-enum StopWatchMode { normal, countDown }
+enum StopWatchMode { countUp, countDown }
 
 /// StopWatchTimer
 class StopWatchTimer {
   StopWatchTimer({
     this.isLapHours = true,
-    this.mode = StopWatchMode.normal,
-    int presetMilliSecond = 0,
+    this.mode = StopWatchMode.countUp,
+    int presetMillisecond = 0,
     this.onChange,
     this.onChangeRawSecond,
     this.onChangeRawMinute,
   }) {
-    _presetTime = presetMilliSecond;
+    _presetTime = presetMillisecond;
 
     _elapsedTime.listen((value) {
       _rawTimeController.add(value);
@@ -132,7 +132,7 @@ class StopWatchTimer {
     final hoursStr = getDisplayTimeHours(value);
     final mStr = getDisplayTimeMinute(value, hours: hours);
     final sStr = getDisplayTimeSecond(value);
-    final msStr = getDisplayTimeMilliSecond(value);
+    final msStr = getDisplayTimeMillisecond(value);
     var result = '';
     if (hours) {
       result += '$hoursStr';
@@ -179,7 +179,7 @@ class StopWatchTimer {
   }
 
   /// Get display millisecond time.
-  static String getDisplayTimeMilliSecond(int mSec) {
+  static String getDisplayTimeMillisecond(int mSec) {
     final ms = (mSec % 1000 / 10).floor();
     return ms.toString().padLeft(2, '0');
   }
@@ -244,7 +244,7 @@ class StopWatchTimer {
 
   void _handle(Timer timer) {
     switch (mode) {
-      case StopWatchMode.normal:
+      case StopWatchMode.countUp:
         final time = DateTime.now().millisecondsSinceEpoch -
             _startTime +
             _stopTime +

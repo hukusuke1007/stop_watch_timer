@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stop_watch_timer_example/count_down_timer_page.dart';
-import 'package:stop_watch_timer_example/stop_watch_timer_page.dart';
+import 'package:stop_watch_timer_example/count_up_timer_page.dart';
 
 void main() => runApp(MyApp());
 
@@ -39,12 +39,12 @@ class MainPage extends StatelessWidget {
                   shape: const StadiumBorder(),
                 ),
                 onPressed: () {
-                  StopWatchTimerPage.navigatorPush(context);
+                  CountUpTimerPage.navigatorPush(context);
                 },
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    'Go To StopWatchTimer',
+                    'Go To CountUpTimer',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
