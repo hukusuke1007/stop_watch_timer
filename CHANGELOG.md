@@ -1,4 +1,7 @@
-# 1.2.0
+# 1.2.0+1
+Modified README.
+
+## 1.2.0
 Updated Plugin.
 
 ## 1.1.0+1
