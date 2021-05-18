@@ -6,7 +6,8 @@ This is Stop Watch Timer.
 
 Countup Timer & Countdown Timer
 
-![countup_timer_demo](./countup_timer_demo.gif) ![countdown_timer_demo](./countdown_timer_demo.gif)
+<img src="./countup_timer_demo.gif" height="60%" />
+<img src="./countdown_timer_demo.gif" height="60%" />
 
 ## Example code
 See the example directory for a complete sample app using stop_watch_timer.
