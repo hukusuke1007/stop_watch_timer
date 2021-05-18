@@ -4,7 +4,9 @@ This is Stop Watch Timer.
 
 [https://pub.dev/packages/stop_watch_timer](https://pub.dev/packages/stop_watch_timer)
 
-![demo](./demo.gif)
+Countup Timer & Countdown Timer
+
+![countup_timer_demo](./countup_timer_demo.gif) ![countdown_timer_demo](./countdown_timer_demo.gif)
 
 ## Example code
 See the example directory for a complete sample app using stop_watch_timer.

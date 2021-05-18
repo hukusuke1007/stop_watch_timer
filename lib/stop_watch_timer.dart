@@ -296,7 +296,7 @@ class StopWatchTimer {
 
   void _lap() {
     if (_timer != null && _timer!.isActive) {
-      final rawValue = _rawTimeController.value!;
+      final rawValue = _rawTimeController.value;
       _records.add(StopWatchRecord(
         rawValue: rawValue,
         hours: getRawHours(rawValue),
