@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/cupertino.dart';
 import 'package:rxdart/rxdart.dart';
 
 /// StopWatchRecord
@@ -34,8 +35,11 @@ class StopWatchTimer {
     this.onChange,
     this.onChangeRawSecond,
     this.onChangeRawMinute,
+    this.onEnded,
   }) {
+    /// Set presetTime
     _presetTime = presetMillisecond;
+    initialPresetTime = presetMillisecond;
 
     _elapsedTime.listen((value) {
       _rawTimeController.add(value);
@@ -86,6 +90,7 @@ class StopWatchTimer {
   final Function(int)? onChange;
   final Function(int)? onChangeRawSecond;
   final Function(int)? onChangeRawMinute;
+  final VoidCallback? onEnded;
 
   final PublishSubject<int> _elapsedTime = PublishSubject<int>();
 
@@ -117,6 +122,9 @@ class StopWatchTimer {
   int? _second;
   int? _minute;
   List<StopWatchRecord> _records = [];
+
+  bool get isRunning => _timer != null && _timer!.isActive;
+  late int initialPresetTime;
 
   /// Get display time.
   static String getDisplayTime(
@@ -221,9 +229,6 @@ class StopWatchTimer {
   }
 
   /// Get display millisecond time.
-  // ignore: avoid_bool_literals_in_conditional_expressions
-  bool get isRunning => _timer != null ? _timer!.isActive : false;
-
   void setPresetHoursTime(int value) =>
       setPresetTime(mSec: value * 3600 * 1000);
 
@@ -233,47 +238,61 @@ class StopWatchTimer {
 
   /// Set preset time. 1000 mSec => 1 sec
   void setPresetTime({required int mSec}) {
-    if (_timer == null && _stopTime == 0) {
-      _presetTime = mSec;
-      _elapsedTime.add(_presetTime);
+    _presetTime += mSec;
+    _elapsedTime.add(_presetTime);
+  }
+
+  void clearPresetTime() {
+    if (mode == StopWatchMode.countUp) {
+      _presetTime = initialPresetTime;
+      _elapsedTime.add(isRunning ? _getCountUpTime(_presetTime) : _presetTime);
+    } else if (mode == StopWatchMode.countDown) {
+      _presetTime = initialPresetTime;
+      _elapsedTime
+          .add(isRunning ? _getCountDownTime(_presetTime) : _presetTime);
     } else {
-      print(
-          'Can be not set preset time because of timer is not reset. please reset timer.');
+      throw Exception('No support mode');
     }
   }
 
   void _handle(Timer timer) {
-    switch (mode) {
-      case StopWatchMode.countUp:
-        final time = DateTime.now().millisecondsSinceEpoch -
-            _startTime +
-            _stopTime +
-            _presetTime;
-        _elapsedTime.add(time);
-        break;
-      case StopWatchMode.countDown:
-        final time = max(
-          _presetTime -
-              (DateTime.now().millisecondsSinceEpoch - _startTime + _stopTime),
-          0,
-        );
-        _elapsedTime.add(time);
-        if (time == 0) {
-          _stop();
+    if (mode == StopWatchMode.countUp) {
+      _elapsedTime.add(_getCountUpTime(_presetTime));
+    } else if (mode == StopWatchMode.countDown) {
+      final time = _getCountDownTime(_presetTime);
+      _elapsedTime.add(time);
+      if (time == 0) {
+        _stop();
+        if (onEnded != null) {
+          onEnded!();
         }
-        break;
+      }
+    } else {
+      throw Exception('No support mode');
     }
   }
 
+  int _getCountUpTime(int presetTime) =>
+      DateTime.now().millisecondsSinceEpoch -
+      _startTime +
+      _stopTime +
+      presetTime;
+
+  int _getCountDownTime(int presetTime) => max(
+        presetTime -
+            (DateTime.now().millisecondsSinceEpoch - _startTime + _stopTime),
+        0,
+      );
+
   void _start() {
-    if (_timer == null || !_timer!.isActive) {
+    if (!isRunning) {
       _startTime = DateTime.now().millisecondsSinceEpoch;
       _timer = Timer.periodic(const Duration(milliseconds: 1), _handle);
     }
   }
 
   void _stop() {
-    if (_timer != null && _timer!.isActive) {
+    if (isRunning) {
       _timer!.cancel();
       _timer = null;
       _stopTime += DateTime.now().millisecondsSinceEpoch - _startTime;
@@ -281,7 +300,7 @@ class StopWatchTimer {
   }
 
   void _reset() {
-    if (_timer != null && _timer!.isActive) {
+    if (isRunning) {
       _timer!.cancel();
       _timer = null;
     }
@@ -295,7 +314,7 @@ class StopWatchTimer {
   }
 
   void _lap() {
-    if (_timer != null && _timer!.isActive) {
+    if (isRunning) {
       final rawValue = _rawTimeController.value;
       _records.add(StopWatchRecord(
         rawValue: rawValue,

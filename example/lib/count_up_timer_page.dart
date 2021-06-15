@@ -363,7 +363,7 @@ class _State extends State<CountUpTimerPage> {
                             color: Colors.pinkAccent,
                             shape: const StadiumBorder(),
                             onPressed: () async {
-                              _stopWatchTimer.setPresetSecondTime(59);
+                              _stopWatchTimer.setPresetSecondTime(10);
                             },
                             child: const Text(
                               'Set Second',
@@ -385,6 +385,23 @@ class _State extends State<CountUpTimerPage> {
                       },
                       child: const Text(
                         'Set PresetTime',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.pinkAccent,
+                        onPrimary: Colors.white,
+                        shape: const StadiumBorder(),
+                      ),
+                      onPressed: () async {
+                        _stopWatchTimer.clearPresetTime();
+                      },
+                      child: const Text(
+                        'Clear PresetTime',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
