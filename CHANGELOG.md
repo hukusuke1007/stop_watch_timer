@@ -1,4 +1,7 @@
-# 1.2.0+1
+# 1.3.0
+Can be set preset time in running timer. Added clearPresetTime and onEnded.
+
+## 1.2.0+1
 Modified README.
 
 ## 1.2.0
