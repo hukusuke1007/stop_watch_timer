@@ -1,10 +1,8 @@
 # stop_watch_timer
 
-This is Stop Watch Timer.
+Simple CountUp timer / CountDown timer. It easily create app of stopwatch.
 
 [https://pub.dev/packages/stop_watch_timer](https://pub.dev/packages/stop_watch_timer)
-
-Countup Timer & Countdown Timer
 
 ![countup_timer_demo](./countup_timer_demo.gif) ![countdown_timer_demo](./countdown_timer_demo.gif)
 
@@ -122,6 +120,26 @@ _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
 
 // Lap time
 _stopWatchTimer.onExecute.add(StopWatchExecute.lap);
+```
+
+Can be set preset time. This case is "00:01.23".
+
+```dart
+// Set Millisecond.
+_stopWatchTimer.setPresetTime(mSec: 1234);
+```
+
+When timer is idle state, can be set this.
+
+```dart
+// Set Hours. (ex. 1 hours)
+_stopWatchTimer.setPresetHoursTime(1);
+
+// Set Minute. (ex. 30 minute)
+_stopWatchTimer.setPresetMinuteTime(30);
+
+// Set Second. (ex. 120 second)
+_stopWatchTimer.setPresetSecondTime(120);
 ```
 
 ### Using callback
@@ -345,25 +363,3 @@ Can be used [getDisplayTime](https://github.com/hukusuke1007/stop_watch_timer/bl
 For example, 1 hours and 30 minute and 50 second and 20 millisecond => "01:30:50.20"
 
 And can be set enable/disable display time and change split character.
-
-### Set Preset Time
-
-Can be set preset time. This case is "00:01.23".
-
-```dart
-// Set Millisecond.
-_stopWatchTimer.setPresetTime(mSec: 1234);
-```
-
-When timer is idle state, can be set this.
-
-```dart
-// Set Hours. (ex. 1 hours)
-_stopWatchTimer.setPresetHoursTime(1);
-
-// Set Minute. (ex. 30 minute)
-_stopWatchTimer.setPresetMinuteTime(30);
-
-// Set Second. (ex. 120 second)
-_stopWatchTimer.setPresetSecondTime(120);
-```

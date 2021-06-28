@@ -39,7 +39,7 @@ class StopWatchTimer {
   }) {
     /// Set presetTime
     _presetTime = presetMillisecond;
-    initialPresetTime = presetMillisecond;
+    _initialPresetTime = presetMillisecond;
 
     _elapsedTime.listen((value) {
       _rawTimeController.add(value);
@@ -115,6 +115,10 @@ class StopWatchTimer {
   Stream<StopWatchExecute> get execute => _executeController;
   Sink<StopWatchExecute> get onExecute => _executeController.sink;
 
+  bool get isRunning => _timer != null && _timer!.isActive;
+  int get initialPresetTime => _initialPresetTime;
+
+  /// Private
   Timer? _timer;
   int _startTime = 0;
   int _stopTime = 0;
@@ -122,9 +126,7 @@ class StopWatchTimer {
   int? _second;
   int? _minute;
   List<StopWatchRecord> _records = [];
-
-  bool get isRunning => _timer != null && _timer!.isActive;
-  late int initialPresetTime;
+  late int _initialPresetTime;
 
   /// Get display time.
   static String getDisplayTime(
@@ -244,10 +246,10 @@ class StopWatchTimer {
 
   void clearPresetTime() {
     if (mode == StopWatchMode.countUp) {
-      _presetTime = initialPresetTime;
+      _presetTime = _initialPresetTime;
       _elapsedTime.add(isRunning ? _getCountUpTime(_presetTime) : _presetTime);
     } else if (mode == StopWatchMode.countDown) {
-      _presetTime = initialPresetTime;
+      _presetTime = _initialPresetTime;
       _elapsedTime
           .add(isRunning ? _getCountDownTime(_presetTime) : _presetTime);
     } else {
