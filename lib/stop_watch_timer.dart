@@ -35,6 +35,7 @@ class StopWatchTimer {
     this.onChange,
     this.onChangeRawSecond,
     this.onChangeRawMinute,
+    this.onStop,
     this.onEnded,
   }) {
     /// Set presetTime
@@ -90,6 +91,7 @@ class StopWatchTimer {
   final Function(int)? onChange;
   final Function(int)? onChangeRawSecond;
   final Function(int)? onChangeRawMinute;
+  final VoidCallback? onStop;
   final VoidCallback? onEnded;
 
   final PublishSubject<int> _elapsedTime = PublishSubject<int>();
@@ -114,6 +116,12 @@ class StopWatchTimer {
       PublishSubject<StopWatchExecute>();
   Stream<StopWatchExecute> get execute => _executeController;
   Sink<StopWatchExecute> get onExecute => _executeController.sink;
+
+  final PublishSubject<bool> _onStopController = PublishSubject<bool>();
+  Stream<bool> get fetchStop => _onStopController;
+
+  final PublishSubject<bool> _onEndedController = PublishSubject<bool>();
+  Stream<bool> get fetchEnded => _onEndedController;
 
   bool get isRunning => _timer != null && _timer!.isActive;
   int get initialPresetTime => _initialPresetTime;
@@ -222,12 +230,17 @@ class StopWatchTimer {
     if (_timer != null && _timer!.isActive) {
       _timer!.cancel();
     }
-    await _elapsedTime.close();
-    await _rawTimeController.close();
-    await _secondTimeController.close();
-    await _minuteTimeController.close();
-    await _recordsController.close();
-    await _executeController.close();
+
+    await Future.wait<dynamic>([
+      _elapsedTime.close(),
+      _rawTimeController.close(),
+      _secondTimeController.close(),
+      _minuteTimeController.close(),
+      _recordsController.close(),
+      _executeController.close(),
+      _onStopController.close(),
+      _onEndedController.close(),
+    ]);
   }
 
   /// Get display millisecond time.
@@ -265,6 +278,7 @@ class StopWatchTimer {
       _elapsedTime.add(time);
       if (time == 0) {
         _stop();
+        _onEndedController.add(true);
         if (onEnded != null) {
           onEnded!();
         }
@@ -293,11 +307,18 @@ class StopWatchTimer {
     }
   }
 
-  void _stop() {
+  bool _stop() {
     if (isRunning) {
       _timer!.cancel();
       _timer = null;
       _stopTime += DateTime.now().millisecondsSinceEpoch - _startTime;
+      _onStopController.add(true);
+      if (onStop != null) {
+        onStop!();
+      }
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -306,6 +327,17 @@ class StopWatchTimer {
       _timer!.cancel();
       _timer = null;
     }
+    if (isRunning || _startTime > 0) {
+      _onStopController.add(true);
+      if (onStop != null) {
+        onStop!();
+      }
+      _onEndedController.add(true);
+      if (onEnded != null) {
+        onEnded!();
+      }
+    }
+
     _startTime = 0;
     _stopTime = 0;
     _second = null;

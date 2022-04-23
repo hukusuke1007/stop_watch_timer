@@ -1,3 +1,6 @@
+# 1.4.0
+Added onStop callback and fetchStop stream, Added fetchEnded stream.
+
 # 1.3.1
 Modified initialPresetTime.
 
