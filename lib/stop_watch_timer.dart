@@ -244,16 +244,22 @@ class StopWatchTimer {
   }
 
   /// Get display millisecond time.
-  void setPresetHoursTime(int value) =>
-      setPresetTime(mSec: value * 3600 * 1000);
+  void setPresetHoursTime(int value, {bool add = true}) =>
+      setPresetTime(mSec: value * 3600 * 1000, add: add);
 
-  void setPresetMinuteTime(int value) => setPresetTime(mSec: value * 60 * 1000);
+  void setPresetMinuteTime(int value, {bool add = true}) =>
+      setPresetTime(mSec: value * 60 * 1000, add: add);
 
-  void setPresetSecondTime(int value) => setPresetTime(mSec: value * 1000);
+  void setPresetSecondTime(int value, {bool add = true}) =>
+      setPresetTime(mSec: value * 1000, add: add);
 
   /// Set preset time. 1000 mSec => 1 sec
-  void setPresetTime({required int mSec}) {
-    _presetTime += mSec;
+  void setPresetTime({required int mSec, bool add = true}) {
+    if (add) {
+      _presetTime += mSec;
+    } else {
+      _presetTime = mSec;
+    }
     _elapsedTime.add(_presetTime);
   }
 
