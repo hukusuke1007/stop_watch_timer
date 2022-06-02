@@ -1,6 +1,6 @@
 name: stop_watch_timer
 description: Simple CountUp timer / CountDown timer. It easily create app of stopwatch.
-version: 1.4.0
+version: 1.5.0
 repository: https://github.com/hukusuke1007/stop_watch_timer
 homepage: https://github.com/hukusuke1007/stop_watch_timer
 

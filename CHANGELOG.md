@@ -1,7 +1,10 @@
-# 1.4.0
+# 1.5.0
+Setting specific values to timer (#27)
+
+## 1.4.0
 Added onStop callback and fetchStop stream, Added fetchEnded stream.
 
-# 1.3.1
+## 1.3.1
 Modified initialPresetTime.
 
 ## 1.3.0
