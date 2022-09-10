@@ -1,4 +1,7 @@
-# 1.5.0
+# 2.0.0
+Fixed example code.
+
+## 1.5.0
 Setting specific values to timer (#27)
 
 ## 1.4.0
