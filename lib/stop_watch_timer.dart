@@ -75,6 +75,7 @@ class StopWatchTimer {
         }
       }
     });
+
     _executeController.listen((value) {
       switch (value) {
         case StopWatchExecute.start:
@@ -124,8 +125,8 @@ class StopWatchTimer {
       'This feature was deprecated after v2.0.0.')
   Sink<StopWatchExecute> get onExecute => _executeController.sink;
 
-  final PublishSubject<bool> _onStopController = PublishSubject<bool>();
-  Stream<bool> get fetchStop => _onStopController;
+  final PublishSubject<bool> _onStoppedController = PublishSubject<bool>();
+  Stream<bool> get fetchStopped => _onStoppedController;
 
   final PublishSubject<bool> _onEndedController = PublishSubject<bool>();
   Stream<bool> get fetchEnded => _onEndedController;
@@ -250,7 +251,7 @@ class StopWatchTimer {
       _minuteTimeController.close(),
       _recordsController.close(),
       _executeController.close(),
-      _onStopController.close(),
+      _onStoppedController.close(),
       _onEndedController.close(),
     ]);
   }
@@ -342,7 +343,7 @@ class StopWatchTimer {
       _timer!.cancel();
       _timer = null;
       _stopTime += DateTime.now().millisecondsSinceEpoch - _startTime;
-      _onStopController.add(true);
+      _onStoppedController.add(true);
       if (onStopped != null) {
         onStopped!();
       }
@@ -358,7 +359,7 @@ class StopWatchTimer {
       _timer = null;
     }
     if (isRunning || _startTime > 0) {
-      _onStopController.add(true);
+      _onStoppedController.add(true);
       if (onStopped != null) {
         onStopped!();
       }

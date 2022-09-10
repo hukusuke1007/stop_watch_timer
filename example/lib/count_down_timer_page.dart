@@ -42,7 +42,8 @@ class _State extends State<CountDownTimerPage> {
     _stopWatchTimer.minuteTime.listen((value) => print('minuteTime $value'));
     _stopWatchTimer.secondTime.listen((value) => print('secondTime $value'));
     _stopWatchTimer.records.listen((value) => print('records $value'));
-    _stopWatchTimer.fetchStop.listen((value) => print('stop from stream'));
+    _stopWatchTimer.fetchStopped
+        .listen((value) => print('stopped from stream'));
     _stopWatchTimer.fetchEnded.listen((value) => print('ended from stream'));
 
     /// Can be set preset time. This case is "00:01.23".

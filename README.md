@@ -33,10 +33,7 @@ This is default mode. If you' d like to set it explicitly, set StopWatchMode.cou
 
 ```dart
 final stopWatchTimer = StopWatchTimer(
-  mode: StopWatchMode.countUp,
-  onChange: (value) => print('onChange $value'),
-  onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
-  onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
+  mode: StopWatchMode.countUp
 );
 ```
 
@@ -50,9 +47,6 @@ Can be set StopWatchMode.countDown mode and preset millisecond.
 final stopWatchTimer = StopWatchTimer(
   mode: StopWatchMode.countDown,
   presetMillisecond: StopWatchTimer.getMilliSecFromMinute(1), // millisecond => minute.
-  onChange: (value) => print('onChange $value'),
-  onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
-  onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
 );
 ```
 
@@ -106,20 +100,20 @@ class _MyAppState extends State<MyApp> {
 To operation stop watch.
 
 ```dart
-// Start
-_stopWatchTimer.onExecute.add(StopWatchExecute.start);
+// Start timer.
+_stopWatchTimer.onStartTimer();
 
 
-// Stop
-_stopWatchTimer.onExecute.add(StopWatchExecute.stop);
+// Stop timer.
+_stopWatchTimer.onStopTimer();
 
 
-// Reset
-_stopWatchTimer.onExecute.add(StopWatchExecute.reset);
+// Reset timer
+_stopWatchTimer.onResetTimer();
 
 
 // Lap time
-_stopWatchTimer.onExecute.add(StopWatchExecute.lap);
+_stopWatchTimer.onAddLap();
 ```
 
 Can be set preset time. This case is "00:01.23".
@@ -142,26 +136,32 @@ _stopWatchTimer.setPresetMinuteTime(30);
 _stopWatchTimer.setPresetSecondTime(120);
 ```
 
-### Using callback
+### Using the stream to get the time
 
 ```dart
-final _stopWatchTimer = StopWatchTimer(
-  onChange: (value) {
-    final displayTime = StopWatchTimer.getDisplayTime(value);
-    print('displayTime $displayTime');
-  },
-  onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
-  onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
-);
-```
 
-### Using stream
+_stopWatchTimer.rawTime.listen((value) => print('rawTime $value'));
+
+_stopWatchTimer.minuteTime.listen((value) => print('minuteTime $value'));
+
+_stopWatchTimer.secondTime.listen((value) => print('secondTime $value'));
+
+_stopWatchTimer.records.listen((value) => print('records $value'));
+
+_stopWatchTimer.fetchStopped.listen((value) => print('stopped from stream'));
+
+_stopWatchTimer.fetchEnded.listen((value) => print('ended from stream'));
+
+```
 
 Display time formatted stop watch. Using function of "rawTime" and "getDisplayTime".
 
 ```dart
-_stopWatchTimer.rawTime.listen((value) => print('rawTime $value ${StopWatchTimer.getDisplayTime(value)}'));
+final raw = 3000 // 3sec
+final displayTime = StopWatchTimer.getDisplayTime(value); // 00:00:03.00
 ```
+
+### Using the StreamBuilder to get the time
 
 Example code using stream builder.
 
@@ -349,6 +349,19 @@ StreamBuilder<List<StopWatchRecord>>(
   },
 ),
 
+```
+
+### Using the Callback to get the time
+
+```dart
+final _stopWatchTimer = StopWatchTimer(
+  onChange: (value) {
+    final displayTime = StopWatchTimer.getDisplayTime(value);
+    print('displayTime $displayTime');
+  },
+  onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
+  onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
+);
 ```
 
 ### Parsing Time
