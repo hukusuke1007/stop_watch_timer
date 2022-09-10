@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
+import 'package:stop_watch_timer_example/rounded_button.dart';
 
 class CountUpTimerPage extends StatefulWidget {
   static Future<void> navigatorPush(BuildContext context) async {
@@ -249,11 +250,9 @@ class _State extends State<CountUpTimerPage> {
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: RaisedButton(
-                        padding: const EdgeInsets.all(4),
+                      child: RoundedButton(
                         color: Colors.lightBlue,
-                        shape: const StadiumBorder(),
-                        onPressed: () async {
+                        onTap: () {
                           _stopWatchTimer.onExecute.add(StopWatchExecute.start);
                         },
                         child: const Text(
@@ -264,11 +263,9 @@ class _State extends State<CountUpTimerPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: RaisedButton(
-                        padding: const EdgeInsets.all(4),
+                      child: RoundedButton(
                         color: Colors.green,
-                        shape: const StadiumBorder(),
-                        onPressed: () async {
+                        onTap: () {
                           _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
                         },
                         child: const Text(
@@ -279,11 +276,9 @@ class _State extends State<CountUpTimerPage> {
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: RaisedButton(
-                        padding: const EdgeInsets.all(4),
+                      child: RoundedButton(
                         color: Colors.red,
-                        shape: const StadiumBorder(),
-                        onPressed: () async {
+                        onTap: () async {
                           _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
                         },
                         child: const Text(
@@ -301,11 +296,9 @@ class _State extends State<CountUpTimerPage> {
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.all(0).copyWith(right: 8),
-                        child: RaisedButton(
-                          padding: const EdgeInsets.all(4),
+                        child: RoundedButton(
                           color: Colors.deepPurpleAccent,
-                          shape: const StadiumBorder(),
-                          onPressed: () async {
+                          onTap: () {
                             _stopWatchTimer.onExecute.add(StopWatchExecute.lap);
                           },
                           child: const Text(
@@ -324,11 +317,9 @@ class _State extends State<CountUpTimerPage> {
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: RaisedButton(
-                          padding: const EdgeInsets.all(4),
+                        child: RoundedButton(
                           color: Colors.pinkAccent,
-                          shape: const StadiumBorder(),
-                          onPressed: () async {
+                          onTap: () {
                             _stopWatchTimer.setPresetHoursTime(1);
                           },
                           child: const Text(
@@ -339,11 +330,9 @@ class _State extends State<CountUpTimerPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: RaisedButton(
-                          padding: const EdgeInsets.all(4),
+                        child: RoundedButton(
                           color: Colors.pinkAccent,
-                          shape: const StadiumBorder(),
-                          onPressed: () async {
+                          onTap: () {
                             _stopWatchTimer.setPresetMinuteTime(59);
                           },
                           child: const Text(
@@ -354,11 +343,9 @@ class _State extends State<CountUpTimerPage> {
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: RaisedButton(
-                          padding: const EdgeInsets.all(4),
+                        child: RoundedButton(
                           color: Colors.pinkAccent,
-                          shape: const StadiumBorder(),
-                          onPressed: () async {
+                          onTap: () {
                             _stopWatchTimer.setPresetSecondTime(10);
                           },
                           child: const Text(
@@ -372,11 +359,9 @@ class _State extends State<CountUpTimerPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: RaisedButton(
-                    padding: const EdgeInsets.all(4),
+                  child: RoundedButton(
                     color: Colors.pinkAccent,
-                    shape: const StadiumBorder(),
-                    onPressed: () async {
+                    onTap: () {
                       _stopWatchTimer.setPresetTime(mSec: 3599 * 1000);
                     },
                     child: const Text(
@@ -387,15 +372,9 @@ class _State extends State<CountUpTimerPage> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.pinkAccent,
-                      onPrimary: Colors.white,
-                      shape: const StadiumBorder(),
-                    ),
-                    onPressed: () async {
-                      _stopWatchTimer.clearPresetTime();
-                    },
+                  child: RoundedButton(
+                    color: Colors.pinkAccent,
+                    onTap: _stopWatchTimer.clearPresetTime,
                     child: const Text(
                       'Clear PresetTime',
                       style: TextStyle(color: Colors.white),
