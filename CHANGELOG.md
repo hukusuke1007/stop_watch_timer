@@ -1,5 +1,12 @@
 # 2.0.0
-Fixed example code.
+Breaking change
+ - Renamed function. onStop => onStopped, fetchStop => fetchStopped
+ - Changed timer execution IF.
+   - onStartTimer, onStopTimer, onResetTimer, onAddLap
+Fixed
+ - Bug that caused 0 to be listened to during countdown.
+ - Modified example code.
+ - Updated README.
 
 ## 1.5.0
 Setting specific values to timer (#27)
