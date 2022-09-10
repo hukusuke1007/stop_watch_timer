@@ -24,7 +24,7 @@ class _State extends State<CountUpTimerPage> {
     onChange: (value) => print('onChange $value'),
     onChangeRawSecond: (value) => print('onChangeRawSecond $value'),
     onChangeRawMinute: (value) => print('onChangeRawMinute $value'),
-    onStop: () {
+    onStopped: () {
       print('onStop');
     },
     onEnded: () {
@@ -252,9 +252,7 @@ class _State extends State<CountUpTimerPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: RoundedButton(
                         color: Colors.lightBlue,
-                        onTap: () {
-                          _stopWatchTimer.onExecute.add(StopWatchExecute.start);
-                        },
+                        onTap: _stopWatchTimer.onStartTimer,
                         child: const Text(
                           'Start',
                           style: TextStyle(color: Colors.white),
@@ -265,9 +263,7 @@ class _State extends State<CountUpTimerPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: RoundedButton(
                         color: Colors.green,
-                        onTap: () {
-                          _stopWatchTimer.onExecute.add(StopWatchExecute.stop);
-                        },
+                        onTap: _stopWatchTimer.onStopTimer,
                         child: const Text(
                           'Stop',
                           style: TextStyle(color: Colors.white),
@@ -278,9 +274,7 @@ class _State extends State<CountUpTimerPage> {
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       child: RoundedButton(
                         color: Colors.red,
-                        onTap: () async {
-                          _stopWatchTimer.onExecute.add(StopWatchExecute.reset);
-                        },
+                        onTap: _stopWatchTimer.onResetTimer,
                         child: const Text(
                           'Reset',
                           style: TextStyle(color: Colors.white),
@@ -298,9 +292,7 @@ class _State extends State<CountUpTimerPage> {
                         padding: const EdgeInsets.all(0).copyWith(right: 8),
                         child: RoundedButton(
                           color: Colors.deepPurpleAccent,
-                          onTap: () {
-                            _stopWatchTimer.onExecute.add(StopWatchExecute.lap);
-                          },
+                          onTap: _stopWatchTimer.onAddLap,
                           child: const Text(
                             'Lap',
                             style: TextStyle(color: Colors.white),

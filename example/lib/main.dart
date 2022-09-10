@@ -34,7 +34,7 @@ class MainPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.pinkAccent,
+                  foregroundColor: Colors.pinkAccent,
                   padding: const EdgeInsets.all(4),
                   shape: const StadiumBorder(),
                 ),
@@ -54,7 +54,7 @@ class MainPage extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 4),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.pinkAccent,
+                  foregroundColor: Colors.pinkAccent,
                   padding: const EdgeInsets.all(4),
                   shape: const StadiumBorder(),
                 ),
