@@ -363,10 +363,6 @@ class StopWatchTimer {
       if (onStopped != null) {
         onStopped!();
       }
-      _onEndedController.add(true);
-      if (onEnded != null) {
-        onEnded!();
-      }
     }
 
     _startTime = 0;
