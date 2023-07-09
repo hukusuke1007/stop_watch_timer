@@ -75,23 +75,6 @@ class StopWatchTimer {
         }
       }
     });
-
-    _executeController.listen((value) {
-      switch (value) {
-        case StopWatchExecute.start:
-          _start();
-          break;
-        case StopWatchExecute.stop:
-          _stop();
-          break;
-        case StopWatchExecute.reset:
-          _reset();
-          break;
-        case StopWatchExecute.lap:
-          _lap();
-          break;
-      }
-    });
   }
 
   final bool isLapHours;
@@ -116,14 +99,6 @@ class StopWatchTimer {
   final BehaviorSubject<List<StopWatchRecord>> _recordsController =
       BehaviorSubject<List<StopWatchRecord>>.seeded([]);
   ValueStream<List<StopWatchRecord>> get records => _recordsController;
-
-  final PublishSubject<StopWatchExecute> _executeController =
-      PublishSubject<StopWatchExecute>();
-  Stream<StopWatchExecute> get execute => _executeController;
-  @Deprecated(
-      'Use functions of onStarTimer, onStopTimer, onResetTimer, onAddLap instead. '
-      'This feature was deprecated after v2.0.0.')
-  Sink<StopWatchExecute> get onExecute => _executeController.sink;
 
   final PublishSubject<bool> _onStoppedController = PublishSubject<bool>();
   Stream<bool> get fetchStopped => _onStoppedController;
@@ -237,20 +212,21 @@ class StopWatchTimer {
   Future<void> dispose() async {
     if (_elapsedTime.isClosed) {
       throw Exception(
-          'This instance is already disposed. Please re-create StopWatchTimer instance.');
+        'This instance is already disposed. Please re-create StopWatchTimer instance.',
+      );
     }
 
-    if (_timer != null && _timer!.isActive) {
-      _timer!.cancel();
+    final timer = _timer;
+    if (timer != null && timer.isActive) {
+      timer.cancel();
     }
 
-    await Future.wait<dynamic>([
+    await Future.wait<void>([
       _elapsedTime.close(),
       _rawTimeController.close(),
       _secondTimeController.close(),
       _minuteTimeController.close(),
       _recordsController.close(),
-      _executeController.close(),
       _onStoppedController.close(),
       _onEndedController.close(),
     ]);

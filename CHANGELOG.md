@@ -1,4 +1,8 @@
-# 2.0.0
+# 3.0.0
+Update dependency constraints to sdk: '>=2.17.0 <4.0.0'.
+Removed _executeController, execute, onExecute IF.
+
+## 2.0.0
 Breaking change
  - Renamed function. onStop => onStopped, fetchStop => fetchStopped
  - Changed timer execution IF.

@@ -370,9 +370,7 @@ class _State extends State<CountDownTimerPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: RoundedButton(
                     color: Colors.pinkAccent,
-                    onTap: () {
-                      _stopWatchTimer.clearPresetTime();
-                    },
+                    onTap: _stopWatchTimer.clearPresetTime,
                     child: const Text(
                       'Clear PresetTime',
                       style: TextStyle(color: Colors.white),
