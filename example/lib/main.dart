@@ -44,7 +44,7 @@ class MainPage extends StatelessWidget {
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    'Go To CountUpTimer',
+                    'Count Up Timer',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),
@@ -64,7 +64,7 @@ class MainPage extends StatelessWidget {
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    'Go To CountDownTimer',
+                    'Count Down Timer',
                     style: TextStyle(color: Colors.white),
                   ),
                 ),

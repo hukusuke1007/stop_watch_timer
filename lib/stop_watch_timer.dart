@@ -257,7 +257,18 @@ class StopWatchTimer {
   /// Set preset time. 1000 mSec => 1 sec
   void setPresetTime({required int mSec, bool add = true}) {
     if (add) {
-      _presetTime += mSec;
+      if (mSec < 0) {
+        /// If mSec is negative value.
+        final nowRawTime = _rawTimeController.value;
+        if ((nowRawTime + mSec) > 0) {
+          _presetTime += mSec;
+        } else {
+          _presetTime = 0;
+        }
+      } else {
+        /// If mSec is positive value.
+        _presetTime += mSec;
+      }
     } else {
       _presetTime = mSec;
     }

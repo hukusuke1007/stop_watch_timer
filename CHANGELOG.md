@@ -1,4 +1,7 @@
-# 3.0.0
+# 3.0.1
+Bug fix (see issue [#36](https://github.com/hukusuke1007/stop_watch_timer/issues/36)).
+
+## 3.0.0
 Update dependency constraints to sdk: '>=2.17.0 <4.0.0'.
 Removed _executeController, execute, onExecute IF.
 
