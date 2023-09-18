@@ -345,7 +345,7 @@ class StopWatchTimer {
       _timer!.cancel();
       _timer = null;
     }
-    if (isRunning || _startTime > 0) {
+    if (isRunning && _startTime > 0) {
       _onStoppedController.add(true);
       if (onStopped != null) {
         onStopped!();
