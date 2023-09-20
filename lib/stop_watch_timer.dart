@@ -55,24 +55,18 @@ class StopWatchTimer {
 
     _elapsedTime.listen((value) {
       _rawTimeController.add(value);
-      if (onChange != null) {
-        onChange!(value);
-      }
+      onChange?.call(value);
       final latestSecond = getRawSecond(value);
       if (_second != latestSecond) {
         _secondTimeController.add(latestSecond);
         _second = latestSecond;
-        if (onChangeRawSecond != null) {
-          onChangeRawSecond!(latestSecond);
-        }
+        onChangeRawSecond?.call(latestSecond);
       }
       final latestMinute = getRawMinute(value);
       if (_minute != latestMinute) {
         _minuteTimeController.add(latestMinute);
         _minute = latestMinute;
-        if (onChangeRawMinute != null) {
-          onChangeRawMinute!(latestMinute);
-        }
+        onChangeRawMinute?.call(latestMinute);
       }
     });
   }
@@ -297,9 +291,7 @@ class StopWatchTimer {
       if (time == 0) {
         _stop();
         _onEndedController.add(true);
-        if (onEnded != null) {
-          onEnded!();
-        }
+        onEnded?.call();
       }
     } else {
       throw Exception('No support mode');
@@ -327,13 +319,11 @@ class StopWatchTimer {
 
   bool _stop() {
     if (isRunning) {
-      _timer!.cancel();
+      _timer?.cancel();
       _timer = null;
       _stopTime += DateTime.now().millisecondsSinceEpoch - _startTime;
       _onStoppedController.add(true);
-      if (onStopped != null) {
-        onStopped!();
-      }
+      onStopped?.call();
       return true;
     } else {
       return false;
@@ -342,18 +332,14 @@ class StopWatchTimer {
 
   void _reset() {
     if (isRunning) {
-      _timer!.cancel();
+      _timer?.cancel();
       _timer = null;
     }
     if (isRunning && _startTime > 0) {
       _onStoppedController.add(true);
-      if (onStopped != null) {
-        onStopped!();
-      }
+      onStopped?.call();
       _onEndedController.add(true);
-      if (onEnded != null) {
-        onEnded!();
-      }
+      onEnded?.call();
     }
 
     _startTime = 0;

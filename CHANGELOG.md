@@ -1,4 +1,7 @@
-# 3.0.1
+# 3.0.2
+Bug fix (see issue [#37](https://github.com/hukusuke1007/stop_watch_timer/pull/37)).
+
+## 3.0.1
 Bug fix (see issue [#36](https://github.com/hukusuke1007/stop_watch_timer/issues/36)).
 
 ## 3.0.0
