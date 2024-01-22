@@ -1,8 +1,7 @@
 # stop_watch_timer
 
-[![never-light-log](./img/logo_blk.png#gh-light-mode-only)](https://neverjp.com#gh-light-mode-only)
-
-[![never-dark-log](./img/logo_wht.png#gh-dark-mode-only)](https://neverjp.com#gh-dark-mode-only)
+[![Never inc](./img/logo_blk.png#gh-light-mode-only)](https://neverjp.com#gh-light-mode-only)
+[![Never inc](./img/logo_wht.png#gh-dark-mode-only)](https://neverjp.com#gh-dark-mode-only)
 
 Developed with 💙 by [Never inc](https://neverjp.com/).
 
