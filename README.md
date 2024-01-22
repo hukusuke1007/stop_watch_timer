@@ -1,7 +1,7 @@
 # stop_watch_timer
 
-[![Never inc](./img/logo_blk.png#gh-light-mode-only)](https://neverjp.com#gh-light-mode-only)
-[![Never inc](./img/logo_wht.png#gh-dark-mode-only)](https://neverjp.com#gh-dark-mode-only)
+[![Never inc][logo_black]][never_link_light]
+[![Never inc][logo_white]][never_link_dark]
 
 Developed with 💙 by [Never inc](https://neverjp.com/).
 
@@ -383,3 +383,8 @@ Can be used [getDisplayTime](https://github.com/hukusuke1007/stop_watch_timer/bl
 For example, 1 hours and 30 minute and 50 second and 20 millisecond => "01:30:50.20"
 
 And can be set enable/disable display time and change split character.
+
+[logo_black]: ./img/logo_wht.png#gh-light-mode-only
+[logo_white]: ./img/logo_blk.png#gh-dark-mode-only
+[never_link_dark]: https://neverjp.com#gh-dark-mode-only
+[never_link_light]: https://neverjp.com#gh-light-mode-only
