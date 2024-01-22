@@ -1,6 +1,6 @@
 # stop_watch_timer
 
-<a href="https://neverjp.com#gh-dark-mode-only"><img width="40%" src="./img/logo_blk.png#gh-light-mode-only" /></a>
+<a href="https://neverjp.com#gh-light-mode-only"><img width="40%" src="./img/logo_blk.png#gh-light-mode-only" /></a>
 
 <a href="https://neverjp.com#gh-dark-mode-only"><img width="40%" src="./img/logo_wht.png#gh-dark-mode-only" /></a>
 
