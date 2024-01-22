@@ -1,8 +1,8 @@
 # stop_watch_timer
 
-<img width="60%" src="./img/logo_blk.png#gh-light-mode-only" />
+<img width="40%" src="./img/logo_blk.png#gh-light-mode-only" />
 
-<img width="60%" src="./img/logo_wht.png#gh-dark-mode-only" />
+<img width="40%" src="./img/logo_wht.png#gh-dark-mode-only" />
 
 Developed with 💙 by Never inc.
 
