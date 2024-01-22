@@ -1,10 +1,10 @@
 # stop_watch_timer
 
-<img width="40%" src="./img/logo_blk.png#gh-light-mode-only" />
+<a href="https://neverjp.com/"><img width="40%" src="./img/logo_blk.png#gh-light-mode-only" /></a>
 
-<img width="40%" src="./img/logo_wht.png#gh-dark-mode-only" />
+<a href="https://neverjp.com/"><img width="40%" src="./img/logo_wht.png#gh-dark-mode-only" /></a>
 
-Developed with 💙 by Never inc.
+Developed with 💙 by [Never inc](https://neverjp.com/).
 
 ---
 
