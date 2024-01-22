@@ -1,4 +1,7 @@
-# 3.0.2
+# 3.1.0
+Added refreshTime parameter. [#38](https://github.com/hukusuke1007/stop_watch_timer/pull/38)
+
+## 3.0.2
 Bug fix (see issue [#37](https://github.com/hukusuke1007/stop_watch_timer/pull/37)).
 
 ## 3.0.1

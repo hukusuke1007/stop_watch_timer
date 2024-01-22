@@ -32,42 +32,20 @@ class MainPage extends StatelessWidget {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.pinkAccent,
-                  padding: const EdgeInsets.all(4),
-                  shape: const StadiumBorder(),
-                ),
+              child: FilledButton(
                 onPressed: () {
                   CountUpTimerPage.navigatorPush(context);
                 },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    'Count Up Timer',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                child: const Text('Count Up Timer'),
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  foregroundColor: Colors.pinkAccent,
-                  padding: const EdgeInsets.all(4),
-                  shape: const StadiumBorder(),
-                ),
+              child: FilledButton(
                 onPressed: () {
                   CountDownTimerPage.navigatorPush(context);
                 },
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    'Count Down Timer',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
+                child: const Text('Count Down Timer'),
               ),
             ),
           ],

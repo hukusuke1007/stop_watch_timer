@@ -1,6 +1,6 @@
 name: stop_watch_timer
 description: Simple CountUp timer / CountDown timer. It easily create app of stopwatch.
-version: 3.0.2
+version: 3.1.0
 repository: https://github.com/hukusuke1007/stop_watch_timer
 homepage: https://github.com/hukusuke1007/stop_watch_timer
 
@@ -15,4 +15,4 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pedantic_mono: ^1.23.0
+  pedantic_mono: ^1.25.0

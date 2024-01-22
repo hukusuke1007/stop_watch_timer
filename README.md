@@ -1,10 +1,17 @@
 # stop_watch_timer
 
+![never-log-light](https://drive.google.com/file/d/1gMkqHhpszCpxkisV__8jb9y8jI2l4KEt/view?usp=sharing#gh-dark-mode-only)
+![never-log-dark](https://drive.google.com/file/d/1dsm_fol1qj-pcwAQ91lmLcrJ-o2oO3Et/view?usp=sharing#gh-light-mode-only)
+
+Developed with 💙 by Never inc.
+
+---
+
 Simple CountUp timer / CountDown timer. It easily create app of stopwatch.
 
 [https://pub.dev/packages/stop_watch_timer](https://pub.dev/packages/stop_watch_timer)
 
-![countup_timer_demo](./countup_timer_demo.gif) ![countdown_timer_demo](./countdown_timer_demo.gif)
+![./img/countup_timer_demo](img/countup_timer_demo.gif) ![./img/countdown_timer_demo](img/countdown_timer_demo.gif)
 
 ## Example code
 See the example directory for a complete sample app using stop_watch_timer.
