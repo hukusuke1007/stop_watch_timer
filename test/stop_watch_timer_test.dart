@@ -2,9 +2,15 @@ import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:test/test.dart';
 
 void main() {
+  // Constants used in the tests:
   // Max int that can be represented in any platform, including the web, without
   // losing precision.
   const maxInt = 9007199254740992; // 2 ^ 53
+  const oneHourInMilliseconds = 1000 * 60 * 60;
+  const maxHoursInMilliseconds = maxInt;
+  const maxHours = 2501999792; // 9007199254740992 ~/ oneHourInMilliseconds
+  const maxHoursStr = '2501999792';
+
   group('Class: StopWatchTimer', () {
     group('Constructor: unnamed', () {
       test('Should have default values', () {
@@ -54,35 +60,57 @@ void main() {
     });
     group('Static methods', () {
       group('Method: getRawHours', () {
-        const msKey = 'msKey';
-        const expectedHoursKey = 'expectedHoursKey';
-        const oneHourInMilliseconds = 1000 * 60 * 60;
-        const threeHoursInMilliseconds = 3 * 1000 * 60 * 60;
-        const maxHoursInMilliseconds = maxInt;
-        const maxHours =
-            2501999792; // 9007199254740992 ~/ oneHourInMilliseconds
+        const threeHoursInMilliseconds = 3 * oneHourInMilliseconds;
 
         final testCases = <Map<String, int>>[
-          {msKey: 0, expectedHoursKey: 0},
-          {msKey: 1, expectedHoursKey: 0},
-          {msKey: 1234, expectedHoursKey: 0},
-          {msKey: oneHourInMilliseconds - 1, expectedHoursKey: 0},
-          {msKey: oneHourInMilliseconds, expectedHoursKey: 1},
-          {msKey: oneHourInMilliseconds + 1, expectedHoursKey: 1},
-          {msKey: threeHoursInMilliseconds - 1, expectedHoursKey: 2},
-          {msKey: threeHoursInMilliseconds, expectedHoursKey: 3},
-          {msKey: threeHoursInMilliseconds + 1, expectedHoursKey: 3},
-          {msKey: maxHoursInMilliseconds - 1, expectedHoursKey: maxHours},
-          {msKey: maxHoursInMilliseconds, expectedHoursKey: maxHours},
+          {'milliSecond': 0, 'expected': 0},
+          {'milliSecond': 1, 'expected': 0},
+          {'milliSecond': 1234, 'expected': 0},
+          {'milliSecond': oneHourInMilliseconds - 1, 'expected': 0},
+          {'milliSecond': oneHourInMilliseconds, 'expected': 1},
+          {'milliSecond': oneHourInMilliseconds + 1, 'expected': 1},
+          {'milliSecond': threeHoursInMilliseconds - 1, 'expected': 2},
+          {'milliSecond': threeHoursInMilliseconds, 'expected': 3},
+          {'milliSecond': threeHoursInMilliseconds + 1, 'expected': 3},
+          {'milliSecond': maxHoursInMilliseconds - 1, 'expected': maxHours},
+          {'milliSecond': maxHoursInMilliseconds, 'expected': maxHours},
         ];
         for (final item in testCases) {
-          final milliSecond = item[msKey]!;
-          final expectedRawHours = item[expectedHoursKey]!;
+          final milliSecond = item['milliSecond']!;
+          final expectedRawHours = item['expected']!;
           test(
             'Should return $expectedRawHours h for input $milliSecond ms',
             () => expect(
               StopWatchTimer.getRawHours(milliSecond),
               equals(expectedRawHours),
+            ),
+          );
+        }
+      });
+
+      group('Method: getDisplayTimeHours', () {
+        const fifteenHoursInMilliseconds = 15 * oneHourInMilliseconds;
+        final testCases = <Map<String, dynamic>>[
+          {'mSec': 0, 'expected': '00'},
+          {'mSec': 1, 'expected': '00'},
+          {'mSec': 1234, 'expected': '00'},
+          {'mSec': oneHourInMilliseconds - 1, 'expected': '00'},
+          {'mSec': oneHourInMilliseconds, 'expected': '01'},
+          {'mSec': oneHourInMilliseconds + 1, 'expected': '01'},
+          {'mSec': fifteenHoursInMilliseconds - 1, 'expected': '14'},
+          {'mSec': fifteenHoursInMilliseconds, 'expected': '15'},
+          {'mSec': fifteenHoursInMilliseconds + 1, 'expected': '15'},
+          {'mSec': maxHoursInMilliseconds - 1, 'expected': maxHoursStr},
+          {'mSec': maxHoursInMilliseconds, 'expected': maxHoursStr},
+        ];
+        for (final item in testCases) {
+          final mSec = item['mSec']! as int;
+          final expectedHourDisplayTime = item['expected']! as String;
+          test(
+            'Should return $expectedHourDisplayTime representation for input $mSec ms',
+            () => expect(
+              StopWatchTimer.getDisplayTimeHours(mSec),
+              equals(expectedHourDisplayTime),
             ),
           );
         }

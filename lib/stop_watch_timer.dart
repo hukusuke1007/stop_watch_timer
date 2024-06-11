@@ -181,6 +181,10 @@ class StopWatchTimer {
     return ms.toString().padLeft(2, '0');
   }
 
+  // TODO(ArturAssisComp): improve the documentation, making it clear that the
+  // input is expected to be non-negative.
+  // TODO(ArturAssisComp): Possibly add an assert:
+  // assert(milliSecond >= 0, message: 'milliSecond should be non-negative')
   /// Get Raw Hours.
   static int getRawHours(int milliSecond) =>
       (milliSecond / (3600 * 1000)).floor();
