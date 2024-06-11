@@ -14,7 +14,7 @@ void main() {
 
   group('Class: StopWatchTimer', () {
     group('Constructor: unnamed', () {
-      test('Should have default values', () {
+      test('Should have default values', () async {
         final stopWatchTimerWithDefaults = StopWatchTimer();
         expect(stopWatchTimerWithDefaults.isLapHours, isTrue);
         expect(stopWatchTimerWithDefaults.mode, equals(StopWatchMode.countUp));
@@ -25,8 +25,9 @@ void main() {
         expect(stopWatchTimerWithDefaults.onStopped, isNull);
         expect(stopWatchTimerWithDefaults.onEnded, isNull);
         expect(stopWatchTimerWithDefaults.initialPresetTime, 0);
+        await stopWatchTimerWithDefaults.dispose();
       });
-      test('Should have non-default values', () {
+      test('Should have non-default values', () async {
         const isLapHours = false;
         const mode = StopWatchMode.countDown;
         const refreshTime = 3;
@@ -36,7 +37,7 @@ void main() {
         void onStopped() {}
         void onEnded() {}
         const presetMillisecond = 102;
-        final stopWatchTimerWithDefaults = StopWatchTimer(
+        final stopWatchTimer = StopWatchTimer(
           isLapHours: isLapHours,
           mode: mode,
           refreshTime: refreshTime,
@@ -48,15 +49,16 @@ void main() {
           presetMillisecond: presetMillisecond,
         );
 
-        expect(stopWatchTimerWithDefaults.isLapHours, isLapHours);
-        expect(stopWatchTimerWithDefaults.mode, equals(mode));
-        expect(stopWatchTimerWithDefaults.refreshTime, equals(refreshTime));
-        expect(stopWatchTimerWithDefaults.onChange, onChange);
-        expect(stopWatchTimerWithDefaults.onChangeRawSecond, onChangeRawSecond);
-        expect(stopWatchTimerWithDefaults.onChangeRawMinute, onChangeRawMinute);
-        expect(stopWatchTimerWithDefaults.onStopped, onStopped);
-        expect(stopWatchTimerWithDefaults.onEnded, onEnded);
-        expect(stopWatchTimerWithDefaults.initialPresetTime, presetMillisecond);
+        expect(stopWatchTimer.isLapHours, isLapHours);
+        expect(stopWatchTimer.mode, equals(mode));
+        expect(stopWatchTimer.refreshTime, equals(refreshTime));
+        expect(stopWatchTimer.onChange, onChange);
+        expect(stopWatchTimer.onChangeRawSecond, onChangeRawSecond);
+        expect(stopWatchTimer.onChangeRawMinute, onChangeRawMinute);
+        expect(stopWatchTimer.onStopped, onStopped);
+        expect(stopWatchTimer.onEnded, onEnded);
+        expect(stopWatchTimer.initialPresetTime, presetMillisecond);
+        await stopWatchTimer.dispose();
       });
     });
     group('Static methods', () {
@@ -327,6 +329,85 @@ void main() {
             ),
           );
         }
+      });
+    });
+
+    group('Getters', () {
+      group('Getter: isRunning', () {
+        late StopWatchTimer countUp;
+        late StopWatchTimer countDown100ms;
+        late StopWatchTimer countDown10000ms;
+        setUp(() {
+          countUp = StopWatchTimer();
+          countDown100ms = StopWatchTimer(
+            mode: StopWatchMode.countDown,
+            presetMillisecond: 100,
+          );
+          countDown10000ms = StopWatchTimer(
+            mode: StopWatchMode.countDown,
+            presetMillisecond: 10000,
+          );
+        });
+        tearDown(() async {
+          await countUp.dispose();
+          await countDown100ms.dispose();
+          await countDown10000ms.dispose();
+        });
+        group('CountUp', () {
+          test('Should be running on start and not be on reset', () async {
+            expect(countUp.isRunning, isFalse);
+            countUp.onStartTimer();
+            expect(countUp.isRunning, isTrue);
+            countUp.onResetTimer();
+            expect(countUp.isRunning, isFalse);
+          });
+          test('Should be running on start and not on stop', () async {
+            expect(countUp.isRunning, isFalse);
+            countUp.onStartTimer();
+            expect(countUp.isRunning, isTrue);
+            countUp.onStopTimer();
+            expect(countUp.isRunning, isFalse);
+          });
+
+          test('Should be running on start and continue on lap', () async {
+            expect(countUp.isRunning, isFalse);
+            countUp.onStartTimer();
+            expect(countUp.isRunning, isTrue);
+            countUp.onAddLap();
+            expect(countUp.isRunning, isTrue);
+          });
+        });
+        group('CountDown', () {
+          test('Should be running on start and not be on reset ', () async {
+            expect(countDown10000ms.isRunning, isFalse);
+            countDown10000ms.onStartTimer();
+            expect(countDown10000ms.isRunning, isTrue);
+            countDown10000ms.onResetTimer();
+            expect(countDown10000ms.isRunning, isFalse);
+          });
+          test('Should be running on start and not on stop ', () async {
+            expect(countDown10000ms.isRunning, isFalse);
+            countDown10000ms.onStartTimer();
+            expect(countDown10000ms.isRunning, isTrue);
+            countDown10000ms.onStopTimer();
+            expect(countDown10000ms.isRunning, isFalse);
+          });
+          test('Should be running on start and continue on lap ', () async {
+            expect(countDown10000ms.isRunning, isFalse);
+            countDown10000ms.onStartTimer();
+            expect(countDown10000ms.isRunning, isTrue);
+            countDown10000ms.onAddLap();
+            expect(countDown10000ms.isRunning, isTrue);
+          });
+          test('Should be running on start and not when count down stops ',
+              () async {
+            expect(countDown100ms.isRunning, isFalse);
+            countDown100ms.onStartTimer();
+            expect(countDown100ms.isRunning, isTrue);
+            await Future<void>.delayed(const Duration(milliseconds: 101));
+            expect(countDown100ms.isRunning, isFalse);
+          });
+        });
       });
     });
   });

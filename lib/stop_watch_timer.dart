@@ -323,6 +323,7 @@ class StopWatchTimer {
     }
   }
 
+  // TODO(ArturAssisComp): why does it return bool?
   bool _stop() {
     if (isRunning) {
       _timer?.cancel();
