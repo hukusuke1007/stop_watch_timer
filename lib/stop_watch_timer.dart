@@ -112,6 +112,7 @@ class StopWatchTimer {
   int? _second;
   int? _minute;
   List<StopWatchRecord> _records = [];
+  // TODO(ArturAssisComp): Study the possibility to make this attribute final.
   late int _initialPresetTime;
 
   /// Get display time.
