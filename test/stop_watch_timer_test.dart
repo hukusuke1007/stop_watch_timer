@@ -1,3 +1,4 @@
+import 'package:rxdart/rxdart.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:test/test.dart';
 // ignore_for_file: lines_longer_than_80_chars
@@ -61,36 +62,91 @@ void main() {
         await stopWatchTimer.dispose();
       });
     });
+    group('Method: dispose', () {
+      test('Should close the streams', () async {
+        // set up
+        var rawTimeIsDone = false;
+        var secondTimeIsDone = false;
+        var minuteTimeIsDone = false;
+        var recordIsDone = false;
+        var fetchStoppedIsDone = false;
+        var fetchEndedIsDone = false;
+        final s = StopWatchTimer();
+        s.rawTime.doOnDone(() => rawTimeIsDone = true).listen(null);
+        s.secondTime.doOnDone(() => secondTimeIsDone = true).listen(null);
+        s.minuteTime.doOnDone(() => minuteTimeIsDone = true).listen(null);
+        s.records.doOnDone(() => recordIsDone = true).listen(null);
+        s.fetchStopped.doOnDone(() => fetchStoppedIsDone = true).listen(null);
+        s.fetchEnded.doOnDone(() => fetchEndedIsDone = true).listen(null);
+
+        // act
+        await s.dispose();
+        await Future<void>.delayed(Duration.zero);
+
+        // checks
+        expect(rawTimeIsDone, isTrue, reason: 'rawTime is not done.');
+        expect(secondTimeIsDone, isTrue, reason: 'secondTime is not done.');
+        expect(minuteTimeIsDone, isTrue, reason: 'minuteTime is not done.');
+        expect(recordIsDone, isTrue, reason: 'records is not done.');
+        expect(fetchStoppedIsDone, isTrue, reason: 'fetchStopped is not done.');
+        expect(fetchEndedIsDone, isTrue, reason: 'fetchEnded is not done.');
+      });
+
+      test('Should throw exception if disposed multiple times', () async {
+        final s = StopWatchTimer();
+        await s.dispose();
+        expect(s.dispose, throwsException);
+        expect(s.dispose, throwsException);
+      });
+    });
     group('Static methods', () {
       group('Method: getRawHours', () {
         const threeHoursInMilliseconds = 3 * oneHourInMilliseconds;
 
         final testCases = <Map<String, int>>[
-          {'milliSecond': 0, 'expected': 0},
-          {'milliSecond': 1, 'expected': 0},
-          {'milliSecond': 1234, 'expected': 0},
-          {'milliSecond': oneHourInMilliseconds - 1, 'expected': 0},
-          {'milliSecond': oneHourInMilliseconds, 'expected': 1},
-          {'milliSecond': oneHourInMilliseconds + 1, 'expected': 1},
-          {'milliSecond': threeHoursInMilliseconds - 1, 'expected': 2},
-          {'milliSecond': threeHoursInMilliseconds, 'expected': 3},
-          {'milliSecond': threeHoursInMilliseconds + 1, 'expected': 3},
-          {'milliSecond': maxHoursInMilliseconds - 1, 'expected': maxHours},
-          {'milliSecond': maxHoursInMilliseconds, 'expected': maxHours},
+          {'mSec': 0, 'expected': 0},
+          {'mSec': 1, 'expected': 0},
+          {'mSec': 1234, 'expected': 0},
+          {'mSec': oneHourInMilliseconds - 1, 'expected': 0},
+          {'mSec': oneHourInMilliseconds, 'expected': 1},
+          {'mSec': oneHourInMilliseconds + 1, 'expected': 1},
+          {'mSec': threeHoursInMilliseconds - 1, 'expected': 2},
+          {'mSec': threeHoursInMilliseconds, 'expected': 3},
+          {'mSec': threeHoursInMilliseconds + 1, 'expected': 3},
+          {'mSec': maxHoursInMilliseconds - 1, 'expected': maxHours},
+          {'mSec': maxHoursInMilliseconds, 'expected': maxHours},
         ];
         for (final item in testCases) {
-          final milliSecond = item['milliSecond']!;
+          final mSec = item['mSec']!;
           final expectedRawHours = item['expected']!;
           test(
-            'Should return $expectedRawHours h for input $milliSecond ms',
+            'Should return $expectedRawHours h for input $mSec ms',
             () => expect(
-              StopWatchTimer.getRawHours(milliSecond),
+              StopWatchTimer.getRawHours(mSec),
               equals(expectedRawHours),
             ),
           );
         }
       });
 
+      group('Method: getMilliSecFromMinute', () {
+        final testCases = <Map<String, int>>[
+          {'min': 0, 'expected': 0},
+          {'min': 1, 'expected': 60000},
+          {'min': 10, 'expected': 600000},
+        ];
+        for (final item in testCases) {
+          final min = item['min']!;
+          final expectedTime = item['expected']!;
+          test(
+            'Should return $expectedTime ms for input $min min',
+            () => expect(
+              StopWatchTimer.getMilliSecFromMinute(min),
+              equals(expectedTime),
+            ),
+          );
+        }
+      });
       group('Method: getDisplayTimeHours', () {
         const fifteenHoursInMilliseconds = 15 * oneHourInMilliseconds;
         final testCases = <Map<String, dynamic>>[
@@ -123,11 +179,12 @@ void main() {
         const time1 = 110484987;
         final testCases = <Map<String, dynamic>>[
           // input: [value, hours, minute, second, milliSecond, hoursRightBreak, minuteRightBreak, secondRightBreak]
+          // pairwise test cases:
           // value = 0
           {
             // 0
             'input': [0, true, false, false, true, ':', ':', '.'],
-            'expectedOutput': '00:00',
+            'expectedOutput': '0000',
           },
           {
             // 1
@@ -224,12 +281,12 @@ void main() {
           {
             // 19
             'input': [time1, true, false, true, false, 'h ', '', '.'],
-            'expectedOutput': '30h 24',
+            'expectedOutput': '3024',
           },
           {
             // 20
             'input': [time1, true, true, false, true, ':', 'min ', ''],
-            'expectedOutput': '30:41min 98',
+            'expectedOutput': '30:4198',
           },
           // TODO(ArturAssisComp): this behavior is not clear by looking only
           // in the documentation. One must check the code to see the behavior.
@@ -246,38 +303,38 @@ void main() {
           {
             // 22
             'input': [time1, true, false, true, true, 'h ', '', '.'],
-            'expectedOutput': '30h 24.98',
+            'expectedOutput': '3024.98',
           },
           {
             // 23
             'input': [time1, false, true, false, true, ':', 'min ', ''],
-            'expectedOutput': '1841min 98',
+            'expectedOutput': '184198',
           },
           {
             // 24
             'input': [time1, true, false, true, false, ':', ':', 's '],
-            'expectedOutput': '30:24s ',
+            'expectedOutput': '3024',
           },
           {
             // 25
             'input': [time1, false, true, false, true, '', ':', '.'],
-            'expectedOutput': '1841:98',
+            'expectedOutput': '184198',
           },
           // value = max which is equivalent to 2501999792h 59min 00s 992ms
           {
             // 26
             'input': [maxInt, true, true, false, true, 'h ', 'min ', ''],
-            'expectedOutput': '${maxHoursStr}h 59min 99',
+            'expectedOutput': '${maxHoursStr}h 5999',
           },
           {
             // 27
             'input': [maxInt, true, true, false, false, '', ':', '.'],
-            'expectedOutput': '${maxHoursStr}59:',
+            'expectedOutput': '${maxHoursStr}59',
           },
           {
             // 28
             'input': [maxInt, true, false, true, true, 'h ', '', ''],
-            'expectedOutput': '${maxHoursStr}h 0099',
+            'expectedOutput': '${maxHoursStr}0099',
           },
           {
             // 29
@@ -296,7 +353,7 @@ void main() {
           {
             // 30
             'input': [time1, true, false, false, false, 'hours', '', ''],
-            'expectedOutput': '30hours',
+            'expectedOutput': '30',
           },
         ];
         for (var i = 0; i < testCases.length; i++) {
