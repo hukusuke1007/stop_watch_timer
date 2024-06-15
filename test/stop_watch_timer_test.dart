@@ -1,6 +1,7 @@
 import 'package:rxdart/rxdart.dart';
 import 'package:stop_watch_timer/stop_watch_timer.dart';
 import 'package:test/test.dart';
+
 // ignore_for_file: lines_longer_than_80_chars
 
 void main() {
@@ -12,6 +13,7 @@ void main() {
   const maxHoursInMilliseconds = maxInt;
   const maxHours = 2501999792; // 9007199254740992 ~/ oneHourInMilliseconds
   const maxHoursStr = '2501999792';
+  const msTimeTolerance = 50;
 
   group('Class: StopWatchTimer', () {
     group('Constructor: unnamed', () {
@@ -72,14 +74,21 @@ void main() {
         var fetchStoppedIsDone = false;
         var fetchEndedIsDone = false;
         final s = StopWatchTimer();
-        s.rawTime.doOnDone(() => rawTimeIsDone = true).listen(null);
-        s.secondTime.doOnDone(() => secondTimeIsDone = true).listen(null);
-        s.minuteTime.doOnDone(() => minuteTimeIsDone = true).listen(null);
-        s.records.doOnDone(() => recordIsDone = true).listen(null);
-        s.fetchStopped.doOnDone(() => fetchStoppedIsDone = true).listen(null);
-        s.fetchEnded.doOnDone(() => fetchEndedIsDone = true).listen(null);
+        final rawTimeSubscription =
+            s.rawTime.doOnDone(() => rawTimeIsDone = true).listen(null);
+        final secondTimeSubscription =
+            s.secondTime.doOnDone(() => secondTimeIsDone = true).listen(null);
+        final minuteTimeSubscription =
+            s.minuteTime.doOnDone(() => minuteTimeIsDone = true).listen(null);
+        final recordSubscription =
+            s.records.doOnDone(() => recordIsDone = true).listen(null);
+        final fetchStoppedSubscription = s.fetchStopped
+            .doOnDone(() => fetchStoppedIsDone = true)
+            .listen(null);
+        final fetchEndedSubscription =
+            s.fetchEnded.doOnDone(() => fetchEndedIsDone = true).listen(null);
 
-        // act
+// act
         await s.dispose();
         await Future<void>.delayed(Duration.zero);
 
@@ -90,6 +99,14 @@ void main() {
         expect(recordIsDone, isTrue, reason: 'records is not done.');
         expect(fetchStoppedIsDone, isTrue, reason: 'fetchStopped is not done.');
         expect(fetchEndedIsDone, isTrue, reason: 'fetchEnded is not done.');
+
+        // tear down
+        await rawTimeSubscription.cancel();
+        await secondTimeSubscription.cancel();
+        await minuteTimeSubscription.cancel();
+        await recordSubscription.cancel();
+        await fetchStoppedSubscription.cancel();
+        await fetchEndedSubscription.cancel();
       });
 
       test('Should throw exception if disposed multiple times', () async {
@@ -98,6 +115,192 @@ void main() {
         expect(s.dispose, throwsException);
         expect(s.dispose, throwsException);
       });
+    });
+    group('Method: onStartTimer', () {
+      test('Should get updated raw time values for count up timer', () async {
+        // set up
+        final rawTimeValues = <int>[];
+        var timesChanged = 0;
+        final countUp = StopWatchTimer(onChange: (_) => timesChanged++);
+        final rawTimeSubscription =
+            countUp.rawTime.doOnData(rawTimeValues.add).listen(null);
+
+        // initial check
+        await Future<void>.delayed(Duration.zero);
+        expect(rawTimeValues.length, equals(1));
+        expect(rawTimeValues.last, equals(0));
+        expect(timesChanged, equals(0));
+
+        // act
+        countUp.onStartTimer();
+
+        // check: 0 ms
+        await Future<void>.delayed(Duration.zero);
+        expect(rawTimeValues.last, closeTo(0, 10));
+        expect(timesChanged, equals(rawTimeValues.length - 1));
+
+        // check: 100 ms
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+        expect(rawTimeValues.last, closeTo(100, msTimeTolerance));
+        expect(timesChanged, equals(rawTimeValues.length - 1));
+
+        // check: 500 ms
+        await Future<void>.delayed(const Duration(milliseconds: 400));
+        expect(rawTimeValues.last, closeTo(500, msTimeTolerance));
+        expect(timesChanged, equals(rawTimeValues.length - 1));
+
+        // tear down
+        await countUp.dispose();
+        await rawTimeSubscription.cancel();
+      });
+      test('Should get updated second time values for count up timer ',
+          () async {
+        // set up
+        final secondTimeValues = <int>[];
+        var timesChanged = 0;
+        final countUp =
+            StopWatchTimer(onChangeRawSecond: (_) => timesChanged++);
+        final secondTimeSubscription =
+            countUp.secondTime.doOnData(secondTimeValues.add).listen(null);
+
+        // initial check
+        await Future<void>.delayed(Duration.zero);
+        expect(secondTimeValues.length, equals(1));
+        expect(secondTimeValues.last, equals(0));
+        expect(timesChanged, equals(0));
+
+        // act
+        countUp.onStartTimer();
+
+        // check: 0 ms
+        await Future<void>.delayed(Duration.zero);
+        expect(secondTimeValues.last, equals(0));
+        expect(timesChanged, equals(secondTimeValues.length - 1));
+
+        // check: 500 ms
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        expect(secondTimeValues.last, equals(0));
+        expect(timesChanged, equals(secondTimeValues.length - 1));
+
+        // check: 1050 ms
+        await Future<void>.delayed(const Duration(milliseconds: 550));
+        expect(secondTimeValues.last, equals(1));
+        expect(timesChanged, equals(secondTimeValues.length - 1));
+
+        // check: 3050 ms
+        await Future<void>.delayed(const Duration(seconds: 2));
+        expect(secondTimeValues.last, equals(3));
+        expect(timesChanged, equals(secondTimeValues.length - 1));
+
+        // tear down
+        await countUp.dispose();
+        await secondTimeSubscription.cancel();
+      });
+      test(
+        '(2 min) Should get updated minute time values for count up timer ',
+        () async {
+          // set up
+          final minuteTimeValues = <int>[];
+          var timesChanged = 0;
+          final countUp =
+              StopWatchTimer(onChangeRawMinute: (_) => timesChanged++);
+          final minuteTimeSubscription =
+              countUp.minuteTime.doOnData(minuteTimeValues.add).listen(null);
+
+          // initial check
+          await Future<void>.delayed(Duration.zero);
+          expect(minuteTimeValues.length, equals(1));
+          expect(minuteTimeValues.last, equals(0));
+          expect(timesChanged, equals(0));
+
+          // act
+          countUp.onStartTimer();
+
+          // check: 0 ms
+          await Future<void>.delayed(Duration.zero);
+          expect(minuteTimeValues.last, equals(0));
+          expect(timesChanged, equals(minuteTimeValues.length - 1));
+
+          // check: 500 ms
+          await Future<void>.delayed(const Duration(milliseconds: 500));
+          expect(minuteTimeValues.last, equals(0));
+          expect(timesChanged, equals(minuteTimeValues.length - 1));
+
+          // check: 30 s
+          await Future<void>.delayed(const Duration(seconds: 30));
+          expect(minuteTimeValues.last, equals(0));
+          expect(timesChanged, equals(minuteTimeValues.length - 1));
+
+          // check: 1 min
+          await Future<void>.delayed(const Duration(seconds: 30));
+          expect(minuteTimeValues.last, equals(1));
+          expect(timesChanged, equals(minuteTimeValues.length - 1));
+
+          // check: 2 min
+          await Future<void>.delayed(const Duration(minutes: 1));
+          expect(minuteTimeValues.last, equals(2));
+          expect(timesChanged, equals(minuteTimeValues.length - 1));
+
+          // tear down
+          await countUp.dispose();
+          await minuteTimeSubscription.cancel();
+        },
+        tags: 'slow',
+      );
+      /*
+      test('Should get updated second time values for count down timer ',
+          () async {
+        // set up
+        final secondTimeValues = <int>[];
+        var timesChanged = 0;
+        final countUp = StopWatchTimer(
+          onChangeRawSecond: (_) => timesChanged++,
+          mode: StopWatchMode.countDown,
+          presetMillisecond: 2500,
+        );
+        final secondTimeSubscription =
+            countUp.secondTime.doOnData(secondTimeValues.add).listen(null);
+
+        // initial check
+        await Future<void>.delayed(Duration.zero);
+        expect(secondTimeValues.length, equals(1));
+        expect(secondTimeValues.last, equals(2));
+        expect(timesChanged, equals(0));
+
+        // act
+        countUp.onStartTimer();
+
+        // check: 0 ms
+        await Future<void>.delayed(Duration.zero);
+        expect(secondTimeValues.last, equals(2));
+        expect(timesChanged, equals(secondTimeValues.length - 1));
+
+        // check: 500 ms
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+        expect(secondTimeValues.last, equals(2));
+        expect(timesChanged, equals(secondTimeValues.length - 1));
+
+        // check: 1050 ms
+        await Future<void>.delayed(const Duration(milliseconds: 550));
+        expect(secondTimeValues.last, equals(1));
+        expect(timesChanged, equals(secondTimeValues.length - 1));
+
+        // check: 2050 ms
+        await Future<void>.delayed(const Duration(seconds: 1));
+        expect(secondTimeValues.last, equals(0));
+        expect(timesChanged, equals(secondTimeValues.length - 1));
+
+        // check: 3050 ms
+        await Future<void>.delayed(const Duration(seconds: 1));
+        expect(secondTimeValues.last, equals(0));
+        expect(timesChanged, equals(secondTimeValues.length - 1));
+
+        // tear down
+        await countUp.dispose();
+        await secondTimeSubscription.cancel();
+      });
+
+       */
     });
     group('Static methods', () {
       group('Method: getRawHours', () {
