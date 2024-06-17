@@ -232,60 +232,6 @@ void main() {
         },
         tags: 'slow',
       );
-      /*
-      test('Should get updated second time values for count down timer ',
-          () async {
-        // set up
-        final secondTimeValues = <int>[];
-        var timesChanged = 0;
-        final countUp = StopWatchTimer(
-          onChangeRawSecond: (_) => timesChanged++,
-          mode: StopWatchMode.countDown,
-          presetMillisecond: 2500,
-        );
-        final secondTimeSubscription =
-            countUp.secondTime.doOnData(secondTimeValues.add).listen(null);
-
-        // initial check
-        await Future<void>.delayed(Duration.zero);
-        expect(secondTimeValues.length, equals(1));
-        expect(secondTimeValues.last, equals(2));
-        expect(timesChanged, equals(0));
-
-        // act
-        countUp.onStartTimer();
-
-        // check: 0 ms
-        await Future<void>.delayed(Duration.zero);
-        expect(secondTimeValues.last, equals(2));
-        expect(timesChanged, equals(secondTimeValues.length - 1));
-
-        // check: 500 ms
-        await Future<void>.delayed(const Duration(milliseconds: 500));
-        expect(secondTimeValues.last, equals(2));
-        expect(timesChanged, equals(secondTimeValues.length - 1));
-
-        // check: 1050 ms
-        await Future<void>.delayed(const Duration(milliseconds: 550));
-        expect(secondTimeValues.last, equals(1));
-        expect(timesChanged, equals(secondTimeValues.length - 1));
-
-        // check: 2050 ms
-        await Future<void>.delayed(const Duration(seconds: 1));
-        expect(secondTimeValues.last, equals(0));
-        expect(timesChanged, equals(secondTimeValues.length - 1));
-
-        // check: 3050 ms
-        await Future<void>.delayed(const Duration(seconds: 1));
-        expect(secondTimeValues.last, equals(0));
-        expect(timesChanged, equals(secondTimeValues.length - 1));
-
-        // tear down
-        await countUp.dispose();
-        await secondTimeSubscription.cancel();
-      });
-
-       */
     });
     group('Static methods', () {
       group('Method: getRawHours', () {
@@ -476,13 +422,6 @@ void main() {
             'input': [time1, true, true, false, true, ':', 'min ', ''],
             'expectedOutput': '30:4198',
           },
-          // TODO(ArturAssisComp): this behavior is not clear by looking only
-          // in the documentation. One must check the code to see the behavior.
-          // Open an issue to improve the documentation.
-          // ## Caveats
-          // - If hours == false and minute == true, the minutes are represented
-          // as raw minutes instead of 60 base. For example, 71 minutes would be
-          // represented as 71 min itself instead of 11 min.
           {
             // 21
             'input': [time1, false, true, true, false, '', ':', 's '],
@@ -529,15 +468,6 @@ void main() {
             'input': [maxInt, false, true, true, false, ':', 'min ', 's '],
             'expectedOutput': '150119987579min 00',
           },
-          // TODO(ArturAssisComp): the parameters RightBreak can only be used as break
-          // elements. If the user wants to use them as suffix, it is not necessarily
-          // possible. For example, if I want "HH hours" or something like that, it is
-          // not possible, it only returns "HH" even if hoursRightBreak is set to
-          // " hours". Maybe adding new parameters: hourSuffix, minuteSuffix,
-          // secondSuffix, and milliSecondSuffix and making them behave as lasting even
-          // if the next time element is not displayed would make it clearer and more
-          // flexible. Those who want to use them as right breaks, could do that, and
-          // those who want to use them as suffixes could do too.
           {
             // 30
             'input': [time1, true, false, false, false, 'hours', '', ''],

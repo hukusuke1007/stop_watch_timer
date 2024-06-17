@@ -216,7 +216,7 @@ class StopWatchTimer {
       timer.cancel();
     }
 
-    // Make sure elapsed time is closed before rawTimeController. This avoid
+    // Make sure elapsed time is closed before rawTimeController. This avoids
     // failure when command `flutter test -x slow` is used to execute the tests.
     // Otherwise, the subscriptions must be canceled before disposing the
     // watch.
@@ -323,7 +323,6 @@ class StopWatchTimer {
     }
   }
 
-  // TODO(ArturAssisComp): why does it return bool?
   bool _stop() {
     if (isRunning) {
       _timer?.cancel();
