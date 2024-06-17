@@ -216,8 +216,13 @@ class StopWatchTimer {
       timer.cancel();
     }
 
+    // Make sure elapsed time is closed before rawTimeController. This avoid
+    // failure when command `flutter test -x slow` is used to execute the tests.
+    // Otherwise, the subscriptions must be canceled before disposing the
+    // watch.
+    await _elapsedTime.close();
+
     await Future.wait<void>([
-      _elapsedTime.close(),
       _rawTimeController.close(),
       _secondTimeController.close(),
       _minuteTimeController.close(),

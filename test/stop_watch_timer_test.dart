@@ -74,19 +74,12 @@ void main() {
         var fetchStoppedIsDone = false;
         var fetchEndedIsDone = false;
         final s = StopWatchTimer();
-        final rawTimeSubscription =
-            s.rawTime.doOnDone(() => rawTimeIsDone = true).listen(null);
-        final secondTimeSubscription =
-            s.secondTime.doOnDone(() => secondTimeIsDone = true).listen(null);
-        final minuteTimeSubscription =
-            s.minuteTime.doOnDone(() => minuteTimeIsDone = true).listen(null);
-        final recordSubscription =
-            s.records.doOnDone(() => recordIsDone = true).listen(null);
-        final fetchStoppedSubscription = s.fetchStopped
-            .doOnDone(() => fetchStoppedIsDone = true)
-            .listen(null);
-        final fetchEndedSubscription =
-            s.fetchEnded.doOnDone(() => fetchEndedIsDone = true).listen(null);
+        s.rawTime.doOnDone(() => rawTimeIsDone = true).listen(null);
+        s.secondTime.doOnDone(() => secondTimeIsDone = true).listen(null);
+        s.minuteTime.doOnDone(() => minuteTimeIsDone = true).listen(null);
+        s.records.doOnDone(() => recordIsDone = true).listen(null);
+        s.fetchStopped.doOnDone(() => fetchStoppedIsDone = true).listen(null);
+        s.fetchEnded.doOnDone(() => fetchEndedIsDone = true).listen(null);
 
 // act
         await s.dispose();
@@ -99,14 +92,6 @@ void main() {
         expect(recordIsDone, isTrue, reason: 'records is not done.');
         expect(fetchStoppedIsDone, isTrue, reason: 'fetchStopped is not done.');
         expect(fetchEndedIsDone, isTrue, reason: 'fetchEnded is not done.');
-
-        // tear down
-        await rawTimeSubscription.cancel();
-        await secondTimeSubscription.cancel();
-        await minuteTimeSubscription.cancel();
-        await recordSubscription.cancel();
-        await fetchStoppedSubscription.cancel();
-        await fetchEndedSubscription.cancel();
       });
 
       test('Should throw exception if disposed multiple times', () async {
