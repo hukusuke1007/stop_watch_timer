@@ -164,7 +164,7 @@ Display time formatted stop watch. Using function of "rawTime" and "getDisplayTi
 
 ```dart
 final raw = 3000 // 3sec
-final displayTime = StopWatchTimer.getDisplayTime(value); // 00:00:03.00
+final displayTime = StopWatchTimer.getDisplayTime(raw); // 00:00:03.00
 ```
 
 ### Using the StreamBuilder to get the time
