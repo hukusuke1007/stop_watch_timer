@@ -150,8 +150,7 @@ void main() {
 
         // initial check
         await Future<void>.delayed(Duration.zero);
-        expect(secondTimeValues.length, equals(1));
-        expect(secondTimeValues.last, equals(0));
+        expect(secondTimeValues, orderedEquals([0]));
         expect(timesChanged, equals(0));
 
         // act
@@ -159,23 +158,23 @@ void main() {
 
         // check: 0 ms
         await Future<void>.delayed(Duration.zero);
-        expect(secondTimeValues.last, equals(0));
-        expect(timesChanged, equals(secondTimeValues.length - 1));
+        expect(secondTimeValues, orderedEquals([0]));
+        expect(timesChanged, equals(0));
 
         // check: 500 ms
         await Future<void>.delayed(const Duration(milliseconds: 500));
-        expect(secondTimeValues.last, equals(0));
-        expect(timesChanged, equals(secondTimeValues.length - 1));
+        expect(secondTimeValues, orderedEquals([0]));
+        expect(timesChanged, equals(0));
 
         // check: 1050 ms
         await Future<void>.delayed(const Duration(milliseconds: 550));
-        expect(secondTimeValues.last, equals(1));
-        expect(timesChanged, equals(secondTimeValues.length - 1));
+        expect(secondTimeValues, orderedEquals([0, 1]));
+        expect(timesChanged, equals(1));
 
         // check: 3050 ms
         await Future<void>.delayed(const Duration(seconds: 2));
-        expect(secondTimeValues.last, equals(3));
-        expect(timesChanged, equals(secondTimeValues.length - 1));
+        expect(secondTimeValues, orderedEquals([0, 1, 2, 3]));
+        expect(timesChanged, equals(3));
 
         // tear down
         await countUp.dispose();
@@ -194,8 +193,7 @@ void main() {
 
           // initial check
           await Future<void>.delayed(Duration.zero);
-          expect(minuteTimeValues.length, equals(1));
-          expect(minuteTimeValues.last, equals(0));
+          expect(minuteTimeValues, orderedEquals([0]));
           expect(timesChanged, equals(0));
 
           // act
@@ -203,28 +201,28 @@ void main() {
 
           // check: 0 ms
           await Future<void>.delayed(Duration.zero);
-          expect(minuteTimeValues.last, equals(0));
-          expect(timesChanged, equals(minuteTimeValues.length - 1));
+          expect(minuteTimeValues, orderedEquals([0]));
+          expect(timesChanged, equals(0));
 
           // check: 500 ms
           await Future<void>.delayed(const Duration(milliseconds: 500));
-          expect(minuteTimeValues.last, equals(0));
-          expect(timesChanged, equals(minuteTimeValues.length - 1));
+          expect(minuteTimeValues, orderedEquals([0]));
+          expect(timesChanged, equals(0));
 
           // check: 30 s
           await Future<void>.delayed(const Duration(seconds: 30));
-          expect(minuteTimeValues.last, equals(0));
-          expect(timesChanged, equals(minuteTimeValues.length - 1));
+          expect(minuteTimeValues, orderedEquals([0]));
+          expect(timesChanged, equals(0));
 
           // check: 1 min
           await Future<void>.delayed(const Duration(seconds: 30));
-          expect(minuteTimeValues.last, equals(1));
-          expect(timesChanged, equals(minuteTimeValues.length - 1));
+          expect(minuteTimeValues, orderedEquals([0, 1]));
+          expect(timesChanged, equals(1));
 
           // check: 2 min
           await Future<void>.delayed(const Duration(minutes: 1));
-          expect(minuteTimeValues.last, equals(2));
-          expect(timesChanged, equals(minuteTimeValues.length - 1));
+          expect(minuteTimeValues, orderedEquals([0, 1, 2]));
+          expect(timesChanged, equals(2));
 
           // tear down
           await countUp.dispose();
@@ -232,6 +230,58 @@ void main() {
         },
         tags: 'slow',
       );
+
+      test('Should get updated second time values for count down timer ',
+          () async {
+        // set up
+        final secondTimeValues = <int>[];
+        var timesChanged = 0;
+        final countUp = StopWatchTimer(
+          onChangeRawSecond: (_) => timesChanged++,
+          mode: StopWatchMode.countDown,
+          presetMillisecond: 2500,
+        );
+        final secondTimeSubscription =
+            countUp.secondTime.doOnData(secondTimeValues.add).listen(null);
+
+        // initial check
+        await Future<void>.delayed(Duration.zero);
+        expect(secondTimeValues.length, equals(1));
+        expect(secondTimeValues.last, equals(2));
+        expect(timesChanged, equals(0));
+
+        // act
+        countUp.onStartTimer();
+
+        // check: 0 ms
+        await Future<void>.delayed(Duration.zero);
+        expect(secondTimeValues, orderedEquals([2]));
+        expect(timesChanged, equals(0));
+
+        // check: 510 ms
+        await Future<void>.delayed(const Duration(milliseconds: 510));
+        expect(secondTimeValues, orderedEquals([2, 1]));
+        expect(timesChanged, equals(1));
+
+        // check: 1050 ms
+        await Future<void>.delayed(const Duration(milliseconds: 540));
+        expect(secondTimeValues, orderedEquals([2, 1]));
+        expect(timesChanged, equals(1));
+
+        // check: 2050 ms
+        await Future<void>.delayed(const Duration(seconds: 1));
+        expect(secondTimeValues, orderedEquals([2, 1, 0]));
+        expect(timesChanged, equals(2));
+
+        // check: 3050 ms
+        await Future<void>.delayed(const Duration(seconds: 1));
+        expect(secondTimeValues, orderedEquals([2, 1, 0]));
+        expect(timesChanged, equals(2));
+
+        // tear down
+        await countUp.dispose();
+        await secondTimeSubscription.cancel();
+      });
     });
     group('Static methods', () {
       group('Method: getRawHours', () {
