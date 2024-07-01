@@ -44,6 +44,8 @@ class StopWatchTimer {
 
     if (mode == StopWatchMode.countDown) {
       final value = presetMillisecond;
+      _second = getRawSecond(value);
+      _minute = getRawMinute(value);
       _rawTimeController = BehaviorSubject<int>.seeded(value);
       _secondTimeController = BehaviorSubject<int>.seeded(getRawSecond(value));
       _minuteTimeController = BehaviorSubject<int>.seeded(getRawMinute(value));
@@ -109,8 +111,8 @@ class StopWatchTimer {
   int _startTime = 0;
   int _stopTime = 0;
   late int _presetTime;
-  int? _second;
-  int? _minute;
+  int _second = 0;
+  int _minute = 0;
   List<StopWatchRecord> _records = [];
   late int _initialPresetTime;
 
@@ -350,8 +352,16 @@ class StopWatchTimer {
 
     _startTime = 0;
     _stopTime = 0;
-    _second = null;
-    _minute = null;
+    switch (mode) {
+      case StopWatchMode.countUp:
+        _second = 0;
+        _minute = 0;
+        break;
+      case StopWatchMode.countDown:
+        _second = getRawSecond(_presetTime);
+        _minute = getRawMinute(_presetTime);
+        break;
+    }
     _records = [];
     _recordsController.add(_records);
     _elapsedTime.add(_presetTime);
