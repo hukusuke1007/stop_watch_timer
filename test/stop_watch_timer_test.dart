@@ -101,6 +101,7 @@ void main() {
         expect(s.dispose, throwsException);
       });
     });
+
     group('Method: onStartTimer', () {
       test('Should get updated raw time values for count up timer', () async {
         // set up
@@ -180,6 +181,7 @@ void main() {
         await countUp.dispose();
         await secondTimeSubscription.cancel();
       });
+
       test(
         '(2 min) Should get updated minute time values for count up timer ',
         () async {
@@ -276,6 +278,108 @@ void main() {
         // check: 3050 ms
         await Future<void>.delayed(const Duration(seconds: 1));
         expect(secondTimeValues, orderedEquals([2, 1, 0]));
+        expect(timesChanged, equals(2));
+
+        // tear down
+        await countUp.dispose();
+        await secondTimeSubscription.cancel();
+      });
+    });
+
+    group('Method: onResetTimer', () {
+      test('Should emit nothing after resetting two times in a row', () async {
+        // set up
+        final rawTimeValues = <int>[];
+        final secondTimeValues = <int>[];
+        final minuteTimeValues = <int>[];
+        var rawTimesChanged = 0;
+        var secondTimesChanged = 0;
+        var minuteTimesChanged = 0;
+        final countUp = StopWatchTimer(
+          onChange: (_) => rawTimesChanged++,
+          onChangeRawMinute: (_) => minuteTimesChanged++,
+          onChangeRawSecond: (_) => secondTimesChanged++,
+        );
+        final rawTimeSubscription =
+            countUp.rawTime.doOnData(rawTimeValues.add).listen(null);
+        final secondTimeSubscription =
+            countUp.secondTime.doOnData(secondTimeValues.add).listen(null);
+        final minuteTimeSubscription =
+            countUp.minuteTime.doOnData(minuteTimeValues.add).listen(null);
+
+        // initial check
+        await Future<void>.delayed(Duration.zero);
+        expect(rawTimeValues, orderedEquals([0]));
+        expect(rawTimesChanged, equals(0));
+        expect(secondTimeValues, orderedEquals([0]));
+        expect(secondTimesChanged, equals(0));
+        expect(minuteTimeValues, orderedEquals([0]));
+        expect(minuteTimesChanged, equals(0));
+
+        // act 1
+        countUp.onResetTimer();
+
+        // check after first reset
+        await Future<void>.delayed(Duration.zero);
+        expect(rawTimeValues, orderedEquals([0, 0]));
+        expect(rawTimesChanged, equals(1));
+        expect(secondTimeValues, orderedEquals([0]));
+        expect(secondTimesChanged, equals(0));
+        expect(minuteTimeValues, orderedEquals([0]));
+        expect(minuteTimesChanged, equals(0));
+
+        // act 2
+        countUp.onResetTimer();
+
+        // check after second reset
+        await Future<void>.delayed(Duration.zero);
+        expect(rawTimeValues, orderedEquals([0, 0, 0]));
+        expect(rawTimesChanged, equals(2));
+        expect(secondTimeValues, orderedEquals([0]));
+        expect(secondTimesChanged, equals(0));
+        expect(minuteTimeValues, orderedEquals([0]));
+        expect(minuteTimesChanged, equals(0));
+
+        // tear down
+        await countUp.dispose();
+        await rawTimeSubscription.cancel();
+        await secondTimeSubscription.cancel();
+        await minuteTimeSubscription.cancel();
+      });
+      test('Should get updated second time after reset', () async {
+        // set up
+        final secondTimeValues = <int>[];
+        var timesChanged = 0;
+        final countUp =
+            StopWatchTimer(onChangeRawSecond: (_) => timesChanged++);
+        final secondTimeSubscription =
+            countUp.secondTime.doOnData(secondTimeValues.add).listen(null);
+
+        // initial check
+        await Future<void>.delayed(Duration.zero);
+        expect(secondTimeValues, orderedEquals([0]));
+        expect(timesChanged, equals(0));
+
+        // act
+        countUp.onStartTimer();
+
+        // check: 1050 ms
+        await Future<void>.delayed(const Duration(milliseconds: 1050));
+        expect(secondTimeValues, orderedEquals([0, 1]));
+        expect(timesChanged, equals(1));
+        expect(countUp.isRunning, isTrue);
+
+        countUp.onResetTimer();
+
+        // Check immediately after resetting
+        await Future<void>.delayed(Duration.zero);
+        expect(secondTimeValues, orderedEquals([0, 1, 0]));
+        expect(timesChanged, equals(2));
+        expect(countUp.isRunning, isFalse);
+
+        // check: 2050 ms
+        await Future<void>.delayed(const Duration(seconds: 1));
+        expect(secondTimeValues, orderedEquals([0, 1, 0]));
         expect(timesChanged, equals(2));
 
         // tear down

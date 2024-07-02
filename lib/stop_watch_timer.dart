@@ -352,16 +352,6 @@ class StopWatchTimer {
 
     _startTime = 0;
     _stopTime = 0;
-    switch (mode) {
-      case StopWatchMode.countUp:
-        _second = 0;
-        _minute = 0;
-        break;
-      case StopWatchMode.countDown:
-        _second = getRawSecond(_presetTime);
-        _minute = getRawMinute(_presetTime);
-        break;
-    }
     _records = [];
     _recordsController.add(_records);
     _elapsedTime.add(_presetTime);
