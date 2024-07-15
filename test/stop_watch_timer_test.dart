@@ -387,6 +387,113 @@ void main() {
         await secondTimeSubscription.cancel();
       });
     });
+
+    group('Method: setPresetTime', () {
+      test(
+          'Should have the correct raw time value when setting stopped count up',
+          () async {
+        const presetTime1 = 100;
+        const presetTime2 = 300;
+        const presetTime3 = 190;
+        final rawTimeValues = <int>[];
+        var timesChanged = 0;
+        final countUp = StopWatchTimer(onChange: (_) => timesChanged++);
+        final rawTimeSubscription =
+            countUp.rawTime.doOnData(rawTimeValues.add).listen(null);
+
+        // initial check
+
+        await Future<void>.delayed(Duration.zero);
+        expect(rawTimeValues.length, equals(1));
+        expect(rawTimeValues.last, equals(0));
+        expect(timesChanged, equals(0));
+
+        // act
+        countUp.setPresetTime(mSec: presetTime1);
+
+        // Check 1
+        await Future<void>.delayed(Duration.zero);
+        expect(rawTimeValues.length, equals(2));
+        expect(rawTimeValues.last, equals(presetTime1));
+        expect(timesChanged, equals(1));
+
+        // act 2
+        countUp.setPresetTime(mSec: presetTime2);
+
+        // Check 1
+        await Future<void>.delayed(Duration.zero);
+        expect(rawTimeValues.length, equals(3));
+        expect(rawTimeValues.last, equals(presetTime1 + presetTime2));
+        expect(timesChanged, equals(2));
+
+        // act 3
+        countUp.setPresetTime(mSec: presetTime3, add: false);
+
+        // Check 1
+        await Future<void>.delayed(Duration.zero);
+        expect(rawTimeValues.length, equals(4));
+        expect(rawTimeValues.last, equals(presetTime3));
+        expect(timesChanged, equals(3));
+
+        // tear down
+        await countUp.dispose();
+        await rawTimeSubscription.cancel();
+      });
+      test(
+          'Should have the correct raw time value when setting stopped count down',
+          () async {
+        const presetTime1 = 100;
+        const presetTime2 = 300;
+        const presetTime3 = 190;
+        final rawTimeValues = <int>[];
+        var timesChanged = 0;
+        final countUp = StopWatchTimer(
+          onChange: (_) => timesChanged++,
+          mode: StopWatchMode.countDown,
+        );
+        final rawTimeSubscription =
+            countUp.rawTime.doOnData(rawTimeValues.add).listen(null);
+
+        // initial check
+
+        await Future<void>.delayed(Duration.zero);
+        expect(rawTimeValues.length, equals(1));
+        expect(rawTimeValues.last, equals(0));
+        expect(timesChanged, equals(0));
+
+        // act
+        countUp.setPresetTime(mSec: presetTime1);
+
+        // Check 1
+        await Future<void>.delayed(Duration.zero);
+        expect(rawTimeValues.length, equals(2));
+        expect(rawTimeValues.last, equals(presetTime1));
+        expect(timesChanged, equals(1));
+
+        // act 2
+        countUp.setPresetTime(mSec: presetTime2);
+
+        // Check 1
+        await Future<void>.delayed(Duration.zero);
+        expect(rawTimeValues.length, equals(3));
+        expect(rawTimeValues.last, equals(presetTime1 + presetTime2));
+        expect(timesChanged, equals(2));
+
+        // act 3
+        countUp.setPresetTime(mSec: presetTime3, add: false);
+
+        // Check 1
+        await Future<void>.delayed(Duration.zero);
+        expect(rawTimeValues.length, equals(4));
+        expect(rawTimeValues.last, equals(presetTime3));
+        expect(timesChanged, equals(3));
+
+        // tear down
+        await countUp.dispose();
+        await rawTimeSubscription.cancel();
+      });
+    });
+
     group('Static methods', () {
       group('Method: getRawHours', () {
         const threeHoursInMilliseconds = 3 * oneHourInMilliseconds;
