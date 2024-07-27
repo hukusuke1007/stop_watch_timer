@@ -642,6 +642,93 @@ void main() {
           await countUp.dispose();
           await rawTimeSubscription.cancel();
         });
+
+        test(
+            'Should have the correct raw time value when setting preset time for started count down',
+            () async {
+          // started counter
+          const initialPreset = 1000;
+          // add == true
+          const waitTime1 = 250;
+          const presetTime1 = 150;
+          const waitTime2 = 500;
+          const presetTime2 = -150;
+          // add == false
+          const waitTime3 = 150;
+          const presetTime3 = 1200;
+          // stop timer
+          const waitTime4 = 100;
+          const presetTime4 = -150000;
+
+          final rawTimeValues = <int>[];
+          var timesChanged = 0;
+          final countDown = StopWatchTimer(
+            mode: StopWatchMode.countDown,
+            onChange: (_) => timesChanged++,
+            presetMillisecond: initialPreset,
+          );
+          final rawTimeSubscription =
+              countDown.rawTime.doOnData(rawTimeValues.add).listen(null);
+
+          countDown.onStartTimer();
+
+          // act 1
+          await Future<void>.delayed(const Duration(milliseconds: waitTime1));
+          countDown.setPresetTime(mSec: presetTime1);
+
+          // Check 1
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(rawTimeValues.last,
+              closeTo(initialPreset + presetTime1 - waitTime1, 50));
+
+          // act 2
+          await Future<void>.delayed(const Duration(milliseconds: waitTime2));
+          countDown.setPresetTime(mSec: presetTime2);
+
+          // Check 2
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(
+            rawTimeValues.last,
+            closeTo(
+              initialPreset +
+                  presetTime1 +
+                  presetTime2 -
+                  (waitTime1 + waitTime2),
+              50,
+            ),
+          );
+
+          // act 3
+          await Future<void>.delayed(const Duration(milliseconds: waitTime3));
+          countDown.setPresetTime(mSec: presetTime3, add: false);
+
+          // Check 3
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(
+            rawTimeValues.last,
+            closeTo(presetTime3 - (waitTime1 + waitTime2 + waitTime3), 50),
+          );
+
+          // act 4
+          await Future<void>.delayed(const Duration(milliseconds: waitTime4));
+          countDown.setPresetTime(mSec: presetTime4);
+
+          // Check 4
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(
+            rawTimeValues.last,
+            closeTo(0, 50),
+          );
+          expect(countDown.isRunning, isFalse);
+
+          // tear down
+          await countDown.dispose();
+          await rawTimeSubscription.cancel();
+        });
       });
     });
 
