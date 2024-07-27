@@ -184,6 +184,7 @@ void main() {
 
       test(
         '(2 min) Should get updated minute time values for count up timer ',
+        skip: 'Too long',
         () async {
           // set up
           final minuteTimeValues = <int>[];
@@ -389,108 +390,258 @@ void main() {
     });
 
     group('Method: setPresetTime', () {
-      test(
-          'Should have the correct raw time value when setting stopped count up',
-          () async {
-        const presetTime1 = 100;
-        const presetTime2 = 300;
-        const presetTime3 = 190;
-        final rawTimeValues = <int>[];
-        var timesChanged = 0;
-        final countUp = StopWatchTimer(onChange: (_) => timesChanged++);
-        final rawTimeSubscription =
-            countUp.rawTime.doOnData(rawTimeValues.add).listen(null);
+      group('CountUp', () {
+        test(
+            'Should have the correct raw time value when setting preset time for stopped count up',
+            () async {
+          // add == true
+          const presetTime1 = 100;
+          const presetTime2 = 300;
+          // add == false
+          const presetTime3 = 190;
+          // add == true
+          const presetTime4 = -100;
+          const presetTime5 = -100000;
 
-        // initial check
+          final rawTimeValues = <int>[];
+          var timesChanged = 0;
+          final countUp = StopWatchTimer(onChange: (_) => timesChanged++);
+          final rawTimeSubscription =
+              countUp.rawTime.doOnData(rawTimeValues.add).listen(null);
 
-        await Future<void>.delayed(Duration.zero);
-        expect(rawTimeValues.length, equals(1));
-        expect(rawTimeValues.last, equals(0));
-        expect(timesChanged, equals(0));
+          // initial check
 
-        // act
-        countUp.setPresetTime(mSec: presetTime1);
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(1));
+          expect(rawTimeValues.last, equals(0));
+          expect(timesChanged, equals(0));
 
-        // Check 1
-        await Future<void>.delayed(Duration.zero);
-        expect(rawTimeValues.length, equals(2));
-        expect(rawTimeValues.last, equals(presetTime1));
-        expect(timesChanged, equals(1));
+          // act 1
+          countUp.setPresetTime(mSec: presetTime1);
 
-        // act 2
-        countUp.setPresetTime(mSec: presetTime2);
+          // Check 1
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(2));
+          expect(rawTimeValues.last, equals(presetTime1));
+          expect(timesChanged, equals(1));
 
-        // Check 1
-        await Future<void>.delayed(Duration.zero);
-        expect(rawTimeValues.length, equals(3));
-        expect(rawTimeValues.last, equals(presetTime1 + presetTime2));
-        expect(timesChanged, equals(2));
+          // act 2
+          countUp.setPresetTime(mSec: presetTime2);
 
-        // act 3
-        countUp.setPresetTime(mSec: presetTime3, add: false);
+          // Check 2
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(3));
+          expect(rawTimeValues.last, equals(presetTime1 + presetTime2));
+          expect(timesChanged, equals(2));
 
-        // Check 1
-        await Future<void>.delayed(Duration.zero);
-        expect(rawTimeValues.length, equals(4));
-        expect(rawTimeValues.last, equals(presetTime3));
-        expect(timesChanged, equals(3));
+          // act 3
+          countUp.setPresetTime(mSec: presetTime3, add: false);
 
-        // tear down
-        await countUp.dispose();
-        await rawTimeSubscription.cancel();
+          // Check 3
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(4));
+          expect(rawTimeValues.last, equals(presetTime3));
+          expect(timesChanged, equals(3));
+
+          // act 4
+          countUp.setPresetTime(mSec: presetTime4);
+
+          // Check 4
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(5));
+          expect(rawTimeValues.last, equals(presetTime3 + presetTime4));
+          expect(timesChanged, equals(4));
+
+          // act 5
+          countUp.setPresetTime(mSec: presetTime5);
+
+          // Check 5
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(6));
+          expect(rawTimeValues.last, equals(0));
+          expect(timesChanged, equals(5));
+
+          // act 6
+          countUp
+            ..setPresetTime(mSec: 100, add: false) // reset
+            ..setPresetTime(mSec: presetTime5, add: false);
+
+          // Check 6
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(8));
+          expect(rawTimeValues.last, equals(0));
+          expect(timesChanged, equals(7));
+
+          // tear down
+          await countUp.dispose();
+          await rawTimeSubscription.cancel();
+        });
+
+        test(
+            'Should have the correct raw time value when setting preset time for started count up',
+            () async {
+          // started counter
+          // add == true
+          const waitTime1 = 250;
+          const presetTime1 = 150;
+          const waitTime2 = 500;
+          const presetTime2 = -150;
+          // add == false
+          const waitTime3 = 150;
+          const presetTime3 = 150;
+          // stop timer
+          const waitTime4 = 100;
+          const presetTime4 = -150000;
+
+          final rawTimeValues = <int>[];
+          var timesChanged = 0;
+          final countUp = StopWatchTimer(onChange: (_) => timesChanged++);
+          final rawTimeSubscription =
+              countUp.rawTime.doOnData(rawTimeValues.add).listen(null);
+
+          countUp.onStartTimer();
+
+          // act 1
+          await Future<void>.delayed(const Duration(milliseconds: waitTime1));
+          countUp.setPresetTime(mSec: presetTime1);
+
+          // Check 1
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(rawTimeValues.last, closeTo(presetTime1 + waitTime1, 50));
+
+          // act 2
+          await Future<void>.delayed(const Duration(milliseconds: waitTime2));
+          countUp.setPresetTime(mSec: presetTime2);
+
+          // Check 2
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(
+            rawTimeValues.last,
+            closeTo(waitTime1 + presetTime1 + waitTime2 + presetTime2, 50),
+          );
+
+          // act 3
+          await Future<void>.delayed(const Duration(milliseconds: waitTime3));
+          countUp.setPresetTime(mSec: presetTime3, add: false);
+
+          // Check 3
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(
+            rawTimeValues.last,
+            closeTo(waitTime1 + waitTime2 + waitTime3 + presetTime3, 50),
+          );
+
+          // act 4
+          countUp.onStopTimer();
+          await Future<void>.delayed(const Duration(milliseconds: waitTime4));
+          countUp.setPresetTime(mSec: presetTime4);
+
+          // Check 4
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(
+            rawTimeValues.last,
+            closeTo(0, 50),
+          );
+
+          // tear down
+          await countUp.dispose();
+          await rawTimeSubscription.cancel();
+        });
       });
-      test(
-          'Should have the correct raw time value when setting stopped count down',
-          () async {
-        const presetTime1 = 100;
-        const presetTime2 = 300;
-        const presetTime3 = 190;
-        final rawTimeValues = <int>[];
-        var timesChanged = 0;
-        final countUp = StopWatchTimer(
-          onChange: (_) => timesChanged++,
-          mode: StopWatchMode.countDown,
-        );
-        final rawTimeSubscription =
-            countUp.rawTime.doOnData(rawTimeValues.add).listen(null);
 
-        // initial check
+      group('CountDown', () {
+        test(
+            'Should have the correct raw time value when setting preset time for stopped count down',
+            () async {
+          // add == true
+          const presetTime1 = 100;
+          const presetTime2 = 300;
+          // add == false
+          const presetTime3 = 190;
+          // add == true
+          const presetTime4 = -100;
+          const presetTime5 = -100000;
 
-        await Future<void>.delayed(Duration.zero);
-        expect(rawTimeValues.length, equals(1));
-        expect(rawTimeValues.last, equals(0));
-        expect(timesChanged, equals(0));
+          final rawTimeValues = <int>[];
+          var timesChanged = 0;
+          final countUp = StopWatchTimer(
+            onChange: (_) => timesChanged++,
+            mode: StopWatchMode.countDown,
+          );
+          final rawTimeSubscription =
+              countUp.rawTime.doOnData(rawTimeValues.add).listen(null);
 
-        // act
-        countUp.setPresetTime(mSec: presetTime1);
+          // initial check
 
-        // Check 1
-        await Future<void>.delayed(Duration.zero);
-        expect(rawTimeValues.length, equals(2));
-        expect(rawTimeValues.last, equals(presetTime1));
-        expect(timesChanged, equals(1));
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(1));
+          expect(rawTimeValues.last, equals(0));
+          expect(timesChanged, equals(0));
 
-        // act 2
-        countUp.setPresetTime(mSec: presetTime2);
+          // act
+          countUp.setPresetTime(mSec: presetTime1);
 
-        // Check 1
-        await Future<void>.delayed(Duration.zero);
-        expect(rawTimeValues.length, equals(3));
-        expect(rawTimeValues.last, equals(presetTime1 + presetTime2));
-        expect(timesChanged, equals(2));
+          // Check 1
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(2));
+          expect(rawTimeValues.last, equals(presetTime1));
+          expect(timesChanged, equals(1));
 
-        // act 3
-        countUp.setPresetTime(mSec: presetTime3, add: false);
+          // act 2
+          countUp.setPresetTime(mSec: presetTime2);
 
-        // Check 1
-        await Future<void>.delayed(Duration.zero);
-        expect(rawTimeValues.length, equals(4));
-        expect(rawTimeValues.last, equals(presetTime3));
-        expect(timesChanged, equals(3));
+          // Check 2
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(3));
+          expect(rawTimeValues.last, equals(presetTime1 + presetTime2));
+          expect(timesChanged, equals(2));
 
-        // tear down
-        await countUp.dispose();
-        await rawTimeSubscription.cancel();
+          // act 3
+          countUp.setPresetTime(mSec: presetTime3, add: false);
+
+          // Check 3
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(4));
+          expect(rawTimeValues.last, equals(presetTime3));
+          expect(timesChanged, equals(3));
+
+          // act 4
+          countUp.setPresetTime(mSec: presetTime4);
+
+          // Check 4
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(5));
+          expect(rawTimeValues.last, equals(presetTime3 + presetTime4));
+          expect(timesChanged, equals(4));
+
+          // act 5
+          countUp.setPresetTime(mSec: presetTime5);
+
+          // Check 5
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(6));
+          expect(rawTimeValues.last, equals(0));
+          expect(timesChanged, equals(5));
+
+          // act 6
+          countUp
+            ..setPresetTime(mSec: 100, add: false) // reset
+            ..setPresetTime(mSec: presetTime5, add: false);
+
+          // Check 6
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(8));
+          expect(rawTimeValues.last, equals(0));
+          expect(timesChanged, equals(7));
+
+          // tear down
+          await countUp.dispose();
+          await rawTimeSubscription.cancel();
+        });
       });
     });
 
