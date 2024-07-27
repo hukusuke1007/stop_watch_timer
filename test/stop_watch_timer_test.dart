@@ -63,6 +63,29 @@ void main() {
         expect(stopWatchTimer.initialPresetTime, presetMillisecond);
         await stopWatchTimer.dispose();
       });
+
+      test(
+          'Should emit initial time correctly when initial preset time is provided',
+          () {
+        const initialPreset = 65000;
+        const initialSecondTime = 65;
+        const initialMinuteTime = 1;
+        final countUp = StopWatchTimer(presetMillisecond: initialPreset);
+        final countDown = StopWatchTimer(
+          mode: StopWatchMode.countDown,
+          presetMillisecond: initialPreset,
+        );
+        expect(countUp.rawTime.value, initialPreset);
+        expect(countUp.secondTime.value, initialSecondTime);
+        expect(countUp.minuteTime.value, initialMinuteTime);
+        expect(countDown.rawTime.value, initialPreset);
+        expect(countDown.secondTime.value, initialSecondTime);
+        expect(countDown.minuteTime.value, initialMinuteTime);
+
+        //tear down
+        countDown.dispose();
+        countUp.dispose();
+      });
     });
     group('Method: dispose', () {
       test('Should close the streams', () async {
@@ -679,8 +702,10 @@ void main() {
           // Check 1
           await Future<void>.delayed(Duration.zero);
           expect(rawTimeValues.length, equals(timesChanged + 1));
-          expect(rawTimeValues.last,
-              closeTo(initialPreset + presetTime1 - waitTime1, 50));
+          expect(
+            rawTimeValues.last,
+            closeTo(initialPreset + presetTime1 - waitTime1, 50),
+          );
 
           // act 2
           await Future<void>.delayed(const Duration(milliseconds: waitTime2));
@@ -717,7 +742,7 @@ void main() {
           countDown.setPresetTime(mSec: presetTime4);
 
           // Check 4
-          await Future<void>.delayed(Duration.zero);
+          await Future<void>.delayed(const Duration(milliseconds: 100));
           expect(rawTimeValues.length, equals(timesChanged + 1));
           expect(
             rawTimeValues.last,
@@ -729,6 +754,373 @@ void main() {
           await countDown.dispose();
           await rawTimeSubscription.cancel();
         });
+      });
+    });
+
+    group('Method: clearPresetTime', () {
+      group('Count up ', () {
+        test('Should clear preset time for stopped count up', () async {
+          const initialPreset = 120;
+          const presetTime1 = 300;
+          final rawTimeValues = <int>[];
+          var timesChanged = 0;
+          final countUp = StopWatchTimer(
+            onChange: (_) => timesChanged++,
+            presetMillisecond: initialPreset,
+          );
+          final rawTimeSubscription =
+              countUp.rawTime.doOnData(rawTimeValues.add).listen(null);
+
+          // Initial check
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(1));
+          expect(rawTimeValues.last, equals(initialPreset));
+          expect(timesChanged, equals(0));
+
+          // act 1
+          countUp.clearPresetTime();
+
+          // check 1
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(2));
+          expect(rawTimeValues.last, equals(initialPreset));
+          expect(timesChanged, equals(1));
+
+          // act 2
+          countUp
+            ..setPresetTime(mSec: presetTime1)
+            ..clearPresetTime();
+
+          // check 2
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(4));
+          expect(rawTimeValues.last, equals(initialPreset));
+          expect(timesChanged, equals(3));
+
+          // tear down
+          await countUp.dispose();
+          await rawTimeSubscription.cancel();
+        });
+
+        test('Should clear preset time for running count up', () async {
+          const waitTime1 = 300;
+          const initialPreset = 120;
+          const presetTime1 = -300000;
+          final rawTimeValues = <int>[];
+          var timesChanged = 0;
+          final countUp = StopWatchTimer(
+            onChange: (_) => timesChanged++,
+            presetMillisecond: initialPreset,
+          );
+          final rawTimeSubscription =
+              countUp.rawTime.doOnData(rawTimeValues.add).listen(null);
+
+          countUp.onStartTimer();
+          // wait
+          await Future<void>.delayed(const Duration(milliseconds: waitTime1));
+
+          // Initial check
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(rawTimeValues.last, closeTo(initialPreset + waitTime1, 50));
+
+          // act 1
+          countUp.clearPresetTime();
+
+          // check 1
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(rawTimeValues.last, closeTo(initialPreset + waitTime1, 50));
+
+          // act 2
+          countUp
+            ..setPresetTime(mSec: presetTime1)
+            ..clearPresetTime();
+
+          // check 2
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(rawTimeValues.last, closeTo(initialPreset + waitTime1, 50));
+
+          // act 3
+          countUp
+            ..onStopTimer()
+            ..setPresetTime(mSec: presetTime1)
+            ..clearPresetTime();
+
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(rawTimeValues.last, closeTo(initialPreset + waitTime1, 50));
+
+          // tear down
+          await countUp.dispose();
+          await rawTimeSubscription.cancel();
+        });
+      });
+      group('Count down ', () {
+        test('Should clear preset time for stopped count down', () async {
+          const initialPreset = 120;
+          const presetTime1 = 300;
+          final rawTimeValues = <int>[];
+          var timesChanged = 0;
+          final countDown = StopWatchTimer(
+            mode: StopWatchMode.countDown,
+            onChange: (_) => timesChanged++,
+            presetMillisecond: initialPreset,
+          );
+          final rawTimeSubscription =
+              countDown.rawTime.doOnData(rawTimeValues.add).listen(null);
+
+          // Initial check
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(1));
+          expect(rawTimeValues.last, equals(initialPreset));
+          expect(timesChanged, equals(0));
+
+          // act 1
+          countDown.clearPresetTime();
+
+          // check 1
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(2));
+          expect(rawTimeValues.last, equals(initialPreset));
+          expect(timesChanged, equals(1));
+
+          // act 2
+          countDown
+            ..setPresetTime(mSec: presetTime1)
+            ..clearPresetTime();
+
+          // check 2
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(4));
+          expect(rawTimeValues.last, equals(initialPreset));
+          expect(timesChanged, equals(3));
+
+          // tear down
+          await countDown.dispose();
+          await rawTimeSubscription.cancel();
+        });
+
+        test('Should clear preset time for running count down', () async {
+          const waitTime1 = 300;
+          const initialPreset = 450;
+          const presetTime1 = -300000;
+          final rawTimeValues = <int>[];
+          var timesChanged = 0;
+          final countDown = StopWatchTimer(
+            mode: StopWatchMode.countDown,
+            onChange: (_) => timesChanged++,
+            presetMillisecond: initialPreset,
+          );
+          final rawTimeSubscription =
+              countDown.rawTime.doOnData(rawTimeValues.add).listen(null);
+
+          countDown.onStartTimer();
+          // wait
+          await Future<void>.delayed(const Duration(milliseconds: waitTime1));
+
+          // Initial check
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(rawTimeValues.last, closeTo(initialPreset - waitTime1, 50));
+
+          // act 1
+          countDown.clearPresetTime();
+
+          // check 1
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(rawTimeValues.last, closeTo(initialPreset - waitTime1, 50));
+
+          // act 2
+          countDown
+            ..setPresetTime(mSec: presetTime1)
+            ..clearPresetTime();
+
+          // check 2
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(rawTimeValues.last, closeTo(initialPreset - waitTime1, 50));
+
+          // act 3
+          countDown
+            ..onStopTimer()
+            ..setPresetTime(mSec: presetTime1)
+            ..clearPresetTime();
+
+          await Future<void>.delayed(Duration.zero);
+          expect(rawTimeValues.length, equals(timesChanged + 1));
+          expect(rawTimeValues.last, closeTo(initialPreset - waitTime1, 50));
+
+          // tear down
+          await countDown.dispose();
+          await rawTimeSubscription.cancel();
+        });
+      });
+    });
+
+    group('Method: onAddLap', () {
+      bool recordIsCloseTo(
+        StopWatchRecord actual,
+        StopWatchRecord expected, [
+        int delta = 50,
+      ]) {
+        final actualRawValue = actual.rawValue;
+        final expectedRawValue = expected.rawValue;
+        var rawValueComparison = actualRawValue == expectedRawValue;
+        if (!rawValueComparison &&
+            actualRawValue != null &&
+            expectedRawValue != null) {
+          rawValueComparison = actualRawValue - expectedRawValue < delta;
+        }
+
+        return rawValueComparison &&
+            actual.hours == expected.hours &&
+            actual.minute == expected.minute &&
+            actual.second == expected.second;
+      }
+
+      test('Should not add lap when counter is stopped', () async {
+        const emptyRecords = <StopWatchRecord>[];
+        final countUpRecords = <List<StopWatchRecord>>[];
+        final countDownRecords = <List<StopWatchRecord>>[];
+
+        final countUp = StopWatchTimer();
+        final countDown = StopWatchTimer(mode: StopWatchMode.countDown);
+
+        final countUpRecordsSubscription =
+            countUp.records.doOnData(countUpRecords.add).listen(null);
+        final countDownRecordsSubscription =
+            countUp.records.doOnData(countDownRecords.add).listen(null);
+
+        await Future<void>.delayed(Duration.zero);
+        expect(countUpRecords, equals([emptyRecords]));
+        expect(countDownRecords, equals([emptyRecords]));
+
+        countUp.onAddLap();
+        countDown.onAddLap();
+        await Future<void>.delayed(Duration.zero);
+        expect(countUpRecords, equals([emptyRecords]));
+        expect(countDownRecords, equals([emptyRecords]));
+
+        // tear down
+        await countUp.dispose();
+        await countUpRecordsSubscription.cancel();
+        await countDown.dispose();
+        await countDownRecordsSubscription.cancel();
+      });
+
+      test('Should add lap correctly for count up timer', () async {
+        const emptyRecords = <StopWatchRecord>[];
+        const waitTime1 = 350;
+        const initialPreset = 100;
+        final countUpRecordListEmissions = <List<StopWatchRecord>>[];
+        final expectedRecord1 = StopWatchRecord.fromRawValue(initialPreset);
+        final expectedRecord2 =
+            StopWatchRecord.fromRawValue(initialPreset + waitTime1);
+
+        final countUp = StopWatchTimer(presetMillisecond: initialPreset);
+
+        final countUpRecordsSubscription = countUp.records
+            .doOnData(countUpRecordListEmissions.add)
+            .listen(null);
+
+        countUp
+          ..onStartTimer()
+          // add lap
+          ..onAddLap();
+
+        // initial expect
+        await Future<void>.delayed(Duration.zero);
+        expect(countUpRecordListEmissions.first, equals(emptyRecords));
+        expect(countUpRecordListEmissions.length, equals(2));
+        expect(countUpRecordListEmissions.last.length, equals(1));
+        final actualRecord1 = countUpRecordListEmissions.last[0];
+        expect(
+          recordIsCloseTo(actualRecord1, expectedRecord1),
+          isTrue,
+          reason:
+              'Actual emission is not close to expected emission\nActual:   $actualRecord1\nExpected: $expectedRecord1',
+        );
+
+        // wait
+        await Future<void>.delayed(const Duration(milliseconds: waitTime1));
+        // add lap
+        countUp.onAddLap();
+
+        // initial expect
+        await Future<void>.delayed(Duration.zero);
+        expect(countUpRecordListEmissions.length, equals(3));
+        expect(countUpRecordListEmissions.last.length, equals(2));
+        final actualRecord2 = countUpRecordListEmissions.last[1];
+        expect(
+          recordIsCloseTo(actualRecord2, expectedRecord2),
+          isTrue,
+          reason:
+              'Actual emission is not close to expected emission\nActual:   $actualRecord1\nExpected: $expectedRecord1',
+        );
+
+        // tear down
+        await countUp.dispose();
+        await countUpRecordsSubscription.cancel();
+      });
+      test('Should add lap correctly for count down timer', () async {
+        const emptyRecords = <StopWatchRecord>[];
+        const waitTime1 = 350;
+        const initialPreset = 500;
+        final countUpRecordListEmissions = <List<StopWatchRecord>>[];
+        final expectedRecord1 = StopWatchRecord.fromRawValue(initialPreset);
+        final expectedRecord2 =
+            StopWatchRecord.fromRawValue(initialPreset - waitTime1);
+
+        final countDown = StopWatchTimer(
+          presetMillisecond: initialPreset,
+          mode: StopWatchMode.countDown,
+        );
+
+        final countDownRecordsSubscription = countDown.records
+            .doOnData(countUpRecordListEmissions.add)
+            .listen(null);
+
+        countDown
+          ..onStartTimer()
+          // add lap
+          ..onAddLap();
+
+        // initial expect
+        await Future<void>.delayed(Duration.zero);
+        expect(countUpRecordListEmissions.first, equals(emptyRecords));
+        expect(countUpRecordListEmissions.length, equals(2));
+        expect(countUpRecordListEmissions.last.length, equals(1));
+        final actualRecord1 = countUpRecordListEmissions.last[0];
+        expect(
+          recordIsCloseTo(actualRecord1, expectedRecord1),
+          isTrue,
+          reason:
+              'Actual emission is not close to expected emission\nActual:   $actualRecord1\nExpected: $expectedRecord1',
+        );
+
+        // wait
+        await Future<void>.delayed(const Duration(milliseconds: waitTime1));
+        // add lap
+        countDown.onAddLap();
+
+        // initial expect
+        await Future<void>.delayed(Duration.zero);
+        expect(countUpRecordListEmissions.length, equals(3));
+        expect(countUpRecordListEmissions.last.length, equals(2));
+        final actualRecord2 = countUpRecordListEmissions.last[1];
+        expect(
+          recordIsCloseTo(actualRecord2, expectedRecord2),
+          isTrue,
+          reason:
+              'Actual emission is not close to expected emission\nActual:   $actualRecord1\nExpected: $expectedRecord1',
+        );
+
+        // tear down
+        await countDown.dispose();
+        await countDownRecordsSubscription.cancel();
       });
     });
 

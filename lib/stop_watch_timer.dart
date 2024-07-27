@@ -12,11 +12,31 @@ class StopWatchRecord {
     this.second,
     this.displayTime,
   });
+
+  StopWatchRecord.fromRawValue(this.rawValue, {bool isLapHours = true})
+      : hours =
+            (rawValue != null) ? StopWatchTimer.getRawHours(rawValue) : null,
+        minute =
+            (rawValue != null) ? StopWatchTimer.getRawMinute(rawValue) : null,
+        second =
+            (rawValue != null) ? StopWatchTimer.getRawSecond(rawValue) : null,
+        displayTime = (rawValue != null)
+            ? StopWatchTimer.getDisplayTime(
+                rawValue,
+                hours: isLapHours,
+              )
+            : null;
+
   int? rawValue;
   int? hours;
   int? minute;
   int? second;
   String? displayTime;
+
+  @override
+  String toString() {
+    return 'h: $hours, m: $minute, s: $second, ms: $rawValue ($displayTime)';
+  }
 }
 
 /// StopWatch ExecuteType
@@ -43,16 +63,19 @@ class StopWatchTimer {
     _initialPresetTime = presetMillisecond;
 
     if (mode == StopWatchMode.countDown) {
-      final value = presetMillisecond;
-      _second = getRawSecond(value);
-      _minute = getRawMinute(value);
-      _rawTimeController = BehaviorSubject<int>.seeded(value);
-      _secondTimeController = BehaviorSubject<int>.seeded(getRawSecond(value));
-      _minuteTimeController = BehaviorSubject<int>.seeded(getRawMinute(value));
+      _second = getRawSecond(presetMillisecond);
+      _minute = getRawMinute(presetMillisecond);
+      _rawTimeController = BehaviorSubject<int>.seeded(presetMillisecond);
+      _secondTimeController =
+          BehaviorSubject<int>.seeded(getRawSecond(presetMillisecond));
+      _minuteTimeController =
+          BehaviorSubject<int>.seeded(getRawMinute(presetMillisecond));
     } else {
-      _rawTimeController = BehaviorSubject<int>.seeded(0);
-      _secondTimeController = BehaviorSubject<int>.seeded(0);
-      _minuteTimeController = BehaviorSubject<int>.seeded(0);
+      _rawTimeController = BehaviorSubject<int>.seeded(presetMillisecond);
+      _secondTimeController =
+          BehaviorSubject<int>.seeded(getRawSecond(presetMillisecond));
+      _minuteTimeController =
+          BehaviorSubject<int>.seeded(getRawMinute(presetMillisecond));
     }
 
     _elapsedTime.listen((value) {
@@ -317,14 +340,13 @@ class StopWatchTimer {
   }
 
   void clearPresetTime() {
+    // todo refactor
     if (mode == StopWatchMode.countUp) {
       _presetTime = _initialPresetTime;
-
-      // TODO(ArturAssisAlves): investigate method
-      _elapsedTime.add(isRunning ? _getCountUpTime() : _presetTime);
+      _elapsedTime.add(_getCountUpTime());
     } else if (mode == StopWatchMode.countDown) {
       _presetTime = _initialPresetTime;
-      _elapsedTime.add(isRunning ? _getCountDownTime() : _presetTime);
+      _elapsedTime.add(_getCountDownTime());
     } else {
       throw Exception('No support mode');
     }
