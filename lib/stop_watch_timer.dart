@@ -157,7 +157,7 @@ class StopWatchTimer {
     final sStr = getDisplayTimeSecond(value);
     final msStr = getDisplayTimeMillisecond(value);
 
-    var result = <String>[];
+    final result = <String>[];
     if (hours) {
       result.add(hoursStr);
     }
@@ -289,13 +289,9 @@ class StopWatchTimer {
         final currentTotalTime = _getCountUpTime();
         final currentTimeWithoutPreset = currentTotalTime - _presetTime;
         if (add) {
-          if (mSec < 0) {
-            if (currentTotalTime + mSec > 0) {
-              _presetTime += mSec;
-            } else {
-              // total time will be 0
-              _presetTime = -currentTimeWithoutPreset;
-            }
+          if (mSec < 0 && currentTotalTime + mSec <= 0) {
+            // total time will be 0
+            _presetTime = -currentTimeWithoutPreset;
           } else {
             _presetTime += mSec;
           }
@@ -311,13 +307,9 @@ class StopWatchTimer {
         final currentRemainingTime = _getCountDownTime();
         final currentElapsedTime = _presetTime - currentRemainingTime;
         if (add) {
-          if (mSec < 0) {
-            if (currentRemainingTime + mSec > 0) {
-              _presetTime += mSec;
-            } else {
-              // total time will be 0
-              _presetTime = currentElapsedTime;
-            }
+          if (mSec < 0 && currentRemainingTime + mSec <= 0) {
+            // total time will be 0
+            _presetTime = currentElapsedTime;
           } else {
             _presetTime += mSec;
           }
@@ -336,31 +328,31 @@ class StopWatchTimer {
   }
 
   void clearPresetTime() {
-    // todo refactor
-    if (mode == StopWatchMode.countUp) {
-      _presetTime = _initialPresetTime;
-      _elapsedTime.add(_getCountUpTime());
-    } else if (mode == StopWatchMode.countDown) {
-      _presetTime = _initialPresetTime;
-      _elapsedTime.add(_getCountDownTime());
-    } else {
-      throw Exception('No support mode');
+    _presetTime = _initialPresetTime;
+    switch (mode) {
+      case StopWatchMode.countUp:
+        _elapsedTime.add(_getCountUpTime());
+        break;
+      case StopWatchMode.countDown:
+        _elapsedTime.add(_getCountDownTime());
+        break;
     }
   }
 
   void _handle(Timer timer) {
-    if (mode == StopWatchMode.countUp) {
-      _elapsedTime.add(_getCountUpTime());
-    } else if (mode == StopWatchMode.countDown) {
-      final time = _getCountDownTime();
-      _elapsedTime.add(time);
-      if (time == 0) {
-        _stop();
-        _onEndedController.add(true);
-        onEnded?.call();
-      }
-    } else {
-      throw Exception('No support mode');
+    switch (mode) {
+      case StopWatchMode.countUp:
+        _elapsedTime.add(_getCountUpTime());
+        break;
+      case StopWatchMode.countDown:
+        final time = _getCountDownTime();
+        _elapsedTime.add(time);
+        if (time == 0) {
+          _stop();
+          _onEndedController.add(true);
+          onEnded?.call();
+        }
+        break;
     }
   }
 
@@ -384,17 +376,16 @@ class StopWatchTimer {
   }
 
   bool _stop() {
-    if (isRunning) {
-      _timer?.cancel();
-      _timer = null;
-      _previousTotalSessionTime +=
-          DateTime.now().millisecondsSinceEpoch - _currentSessionStartTime;
-      _onStoppedController.add(true);
-      onStopped?.call();
-      return true;
-    } else {
+    if (!isRunning) {
       return false;
     }
+    _timer?.cancel();
+    _timer = null;
+    _previousTotalSessionTime +=
+        DateTime.now().millisecondsSinceEpoch - _currentSessionStartTime;
+    _onStoppedController.add(true);
+    onStopped?.call();
+    return true;
   }
 
   void _reset() {
