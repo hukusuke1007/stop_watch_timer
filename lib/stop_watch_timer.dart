@@ -156,29 +156,30 @@ class StopWatchTimer {
     final mStr = getDisplayTimeMinute(value, hours: hours);
     final sStr = getDisplayTimeSecond(value);
     final msStr = getDisplayTimeMillisecond(value);
-    var result = '';
+
+    var result = <String>[];
     if (hours) {
-      result += hoursStr;
+      result.add(hoursStr);
     }
     if (minute) {
       if (hours) {
-        result += hoursRightBreak;
+        result.add(hoursRightBreak);
       }
-      result += mStr;
+      result.add(mStr);
     }
     if (second) {
       if (minute) {
-        result += minuteRightBreak;
+        result.add(minuteRightBreak);
       }
-      result += sStr;
+      result.add(sStr);
     }
     if (milliSecond) {
       if (second) {
-        result += secondRightBreak;
+        result.add(secondRightBreak);
       }
-      result += msStr;
+      result.add(msStr);
     }
-    return result;
+    return result.join();
   }
 
   /// Get display hours time.
