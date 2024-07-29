@@ -207,6 +207,7 @@ void main() {
 
       test(
         '(2 min) Should get updated minute time values for count up timer ',
+        skip: 'too long',
         () async {
           // set up
           final minuteTimeValues = <int>[];
@@ -499,6 +500,31 @@ void main() {
           await rawTimeSubscription.cancel();
         });
 
+        test(
+            'Should have the correct raw time value when setting preset time equals negative total time for started count up',
+            () async {
+          // started counter
+          // add == true
+          const waitTime1 = 250;
+          const initialPresetTime = 100;
+
+          final countUp = StopWatchTimer(presetMillisecond: initialPresetTime)
+            ..onStartTimer();
+
+          // act 1
+          await Future<void>.delayed(const Duration(milliseconds: waitTime1));
+          countUp.onStopTimer();
+
+          await Future<void>.delayed(Duration.zero);
+          countUp.setPresetTime(mSec: -countUp.rawTime.value);
+
+          // Check 1
+          await Future<void>.delayed(Duration.zero);
+          expect(countUp.rawTime.value, closeTo(0, 50));
+
+          // tear down
+          await countUp.dispose();
+        });
         test(
             'Should have the correct raw time value when setting preset time for started count up',
             () async {
