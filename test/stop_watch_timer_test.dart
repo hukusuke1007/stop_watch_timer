@@ -207,7 +207,6 @@ void main() {
 
       test(
         '(2 min) Should get updated minute time values for count up timer ',
-        skip: 'Too long',
         () async {
           // set up
           final minuteTimeValues = <int>[];
