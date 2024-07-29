@@ -65,18 +65,13 @@ class StopWatchTimer {
     if (mode == StopWatchMode.countDown) {
       _second = getRawSecond(presetMillisecond);
       _minute = getRawMinute(presetMillisecond);
-      _rawTimeController = BehaviorSubject<int>.seeded(presetMillisecond);
-      _secondTimeController =
-          BehaviorSubject<int>.seeded(getRawSecond(presetMillisecond));
-      _minuteTimeController =
-          BehaviorSubject<int>.seeded(getRawMinute(presetMillisecond));
-    } else {
-      _rawTimeController = BehaviorSubject<int>.seeded(presetMillisecond);
-      _secondTimeController =
-          BehaviorSubject<int>.seeded(getRawSecond(presetMillisecond));
-      _minuteTimeController =
-          BehaviorSubject<int>.seeded(getRawMinute(presetMillisecond));
     }
+
+    _rawTimeController = BehaviorSubject<int>.seeded(presetMillisecond);
+    _secondTimeController =
+        BehaviorSubject<int>.seeded(getRawSecond(presetMillisecond));
+    _minuteTimeController =
+        BehaviorSubject<int>.seeded(getRawMinute(presetMillisecond));
 
     _elapsedTime.listen((value) {
       _rawTimeController.add(value);
