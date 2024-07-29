@@ -29,7 +29,6 @@ class _State extends State<CountUpTimerPage> {
     onEnded: () {
       print('onEnded');
     },
-    presetMillisecond: 3000,
   );
 
   final _scrollController = ScrollController();
