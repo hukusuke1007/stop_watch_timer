@@ -1,4 +1,8 @@
-# 3.1.1
+# 3.2.0
+Updated RxDart.
+Added test code and refactored code [#49](https://github.com/hukusuke1007/stop_watch_timer/pull/49).
+
+## 3.1.1
 Fix pubspec.yaml
 
 ## 3.1.0+4
