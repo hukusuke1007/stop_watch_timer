@@ -403,8 +403,12 @@ class StopWatchTimer {
     _currentSessionStartTime = 0;
     _previousTotalSessionTime = 0;
     _records = [];
-    _recordsController.add(_records);
-    _elapsedTime.add(_presetTime);
+    if (!_recordsController.isClosed) {
+      _recordsController.add(_records);
+    }
+    if (!_elapsedTime.isClosed) {
+      _elapsedTime.add(_presetTime);
+    }
   }
 
   void _lap() {
