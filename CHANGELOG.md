@@ -1,4 +1,8 @@
-# 3.2.0
+# 3.2.1
+Bug fix [#50](https://github.com/hukusuke1007/stop_watch_timer/pull/50).
+Updated example code.
+
+## 3.2.0
 Updated RxDart.
 Added test code and refactored code [#49](https://github.com/hukusuke1007/stop_watch_timer/pull/49).
 
