@@ -29,14 +29,10 @@ jobs:
           channel: ${{ matrix.flutter-channel }}
           cache: false
       - name: flutter doctor
-        working-directory: .
         run: flutter doctor -v
       - name: flutter pub get
-        working-directory: .
         run: flutter pub get
       - name: flutter analyze
-        working-directory: .
         run: flutter analyze
       - name: flutter test
-        working-directory: .
         run: flutter test
