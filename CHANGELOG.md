@@ -1,4 +1,7 @@
-# 3.2.1
+# 3.2.2
+Bug fix [#53](https://github.com/hukusuke1007/stop_watch_timer/pull/53).
+
+## 3.2.1
 Bug fix [#50](https://github.com/hukusuke1007/stop_watch_timer/pull/50).
 Updated example code.
 
