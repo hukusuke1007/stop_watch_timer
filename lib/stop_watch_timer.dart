@@ -340,6 +340,10 @@ class StopWatchTimer {
   }
 
   void _handle(Timer timer) {
+    if (_elapsedTime.isClosed) {
+      return;
+    }
+
     switch (mode) {
       case StopWatchMode.countUp:
         _elapsedTime.add(_getCountUpTime());
