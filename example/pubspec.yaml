@@ -1,10 +1,10 @@
 name: stop_watch_timer_example
 description: Demonstrates how to use the stop_watch_timer plugin.
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
+  sdk: ">=3.3.0 <4.0.0"
 
 dependencies:
   cupertino_icons: ^1.0.1+1

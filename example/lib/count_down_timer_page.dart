@@ -5,7 +5,7 @@ import 'package:stop_watch_timer/stop_watch_timer.dart';
 class CountDownTimerPage extends StatefulWidget {
   const CountDownTimerPage({super.key});
 
-  static Future<void> navigatorPush(BuildContext context) async {
+  static Future<void> navigatorPush(BuildContext context) {
     return Navigator.of(context).push<void>(
       MaterialPageRoute(
         builder: (_) => const CountDownTimerPage(),
@@ -20,7 +20,7 @@ class CountDownTimerPage extends StatefulWidget {
 class CountDownTimerPageState extends State<CountDownTimerPage> {
   final _isHours = true;
 
-  final StopWatchTimer _stopWatchTimer = StopWatchTimer(
+  final _stopWatchTimer = StopWatchTimer(
     mode: StopWatchMode.countDown,
     presetMillisecond: StopWatchTimer.getMilliSecFromSecond(3),
     onChange: (value) => debugPrint('onChange $value'),

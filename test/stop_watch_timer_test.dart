@@ -1445,14 +1445,14 @@ void main() {
           await countDown10000ms.dispose();
         });
         group('CountUp', () {
-          test('Should be running on start and not be on reset', () async {
+          test('Should be running on start and not be on reset', () {
             expect(countUp.isRunning, isFalse);
             countUp.onStartTimer();
             expect(countUp.isRunning, isTrue);
             countUp.onResetTimer();
             expect(countUp.isRunning, isFalse);
           });
-          test('Should be running on start and not on stop', () async {
+          test('Should be running on start and not on stop', () {
             expect(countUp.isRunning, isFalse);
             countUp.onStartTimer();
             expect(countUp.isRunning, isTrue);
@@ -1460,7 +1460,7 @@ void main() {
             expect(countUp.isRunning, isFalse);
           });
 
-          test('Should be running on start and continue on lap', () async {
+          test('Should be running on start and continue on lap', () {
             expect(countUp.isRunning, isFalse);
             countUp.onStartTimer();
             expect(countUp.isRunning, isTrue);
@@ -1469,21 +1469,21 @@ void main() {
           });
         });
         group('CountDown', () {
-          test('Should be running on start and not be on reset ', () async {
+          test('Should be running on start and not be on reset ', () {
             expect(countDown10000ms.isRunning, isFalse);
             countDown10000ms.onStartTimer();
             expect(countDown10000ms.isRunning, isTrue);
             countDown10000ms.onResetTimer();
             expect(countDown10000ms.isRunning, isFalse);
           });
-          test('Should be running on start and not on stop ', () async {
+          test('Should be running on start and not on stop ', () {
             expect(countDown10000ms.isRunning, isFalse);
             countDown10000ms.onStartTimer();
             expect(countDown10000ms.isRunning, isTrue);
             countDown10000ms.onStopTimer();
             expect(countDown10000ms.isRunning, isFalse);
           });
-          test('Should be running on start and continue on lap ', () async {
+          test('Should be running on start and continue on lap ', () {
             expect(countDown10000ms.isRunning, isFalse);
             countDown10000ms.onStartTimer();
             expect(countDown10000ms.isRunning, isTrue);
