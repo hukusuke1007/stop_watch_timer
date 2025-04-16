@@ -1,4 +1,4 @@
-name: flutter_analyze
+name: flutter
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
       - name: set up flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' 
+          channel: "stable"
           cache: true
       - name: flutter doctor
         run: flutter doctor -v
