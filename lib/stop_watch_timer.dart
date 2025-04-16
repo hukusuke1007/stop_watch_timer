@@ -100,7 +100,7 @@ class StopWatchTimer {
   final void Function()? onStopped;
   final void Function()? onEnded;
 
-  final PublishSubject<int> _elapsedTime = PublishSubject<int>();
+  final _elapsedTime = PublishSubject<int>();
 
   late BehaviorSubject<int> _rawTimeController;
   ValueStream<int> get rawTime => _rawTimeController;
@@ -111,14 +111,13 @@ class StopWatchTimer {
   late BehaviorSubject<int> _minuteTimeController;
   ValueStream<int> get minuteTime => _minuteTimeController;
 
-  final BehaviorSubject<List<StopWatchRecord>> _recordsController =
-      BehaviorSubject<List<StopWatchRecord>>.seeded([]);
+  final _recordsController = BehaviorSubject<List<StopWatchRecord>>.seeded([]);
   ValueStream<List<StopWatchRecord>> get records => _recordsController;
 
-  final PublishSubject<bool> _onStoppedController = PublishSubject<bool>();
+  final _onStoppedController = PublishSubject<bool>();
   Stream<bool> get fetchStopped => _onStoppedController;
 
-  final PublishSubject<bool> _onEndedController = PublishSubject<bool>();
+  final _onEndedController = PublishSubject<bool>();
   Stream<bool> get fetchEnded => _onEndedController;
 
   bool get isRunning => _timer != null && _timer!.isActive;
@@ -129,15 +128,15 @@ class StopWatchTimer {
 
   /// Stores the [DateTime] moment in which the current count session
   /// started.
-  int _currentSessionStartTime = 0;
+  var _currentSessionStartTime = 0;
 
   /// Stores the sum of all previous count sessions.
   /// ## Caveats
   /// - If the counter is stopped, there is no current session in progress.
-  int _previousTotalSessionTime = 0;
+  var _previousTotalSessionTime = 0;
   late int _presetTime;
-  int _second = 0;
-  int _minute = 0;
+  var _second = 0;
+  var _minute = 0;
   List<StopWatchRecord> _records = [];
   late int _initialPresetTime;
 
