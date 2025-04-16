@@ -18,8 +18,8 @@ jobs:
       - name: set up flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'      # 例: 使用したいチャンネルを指定
-          cache: true            # キャッシュを有効にして高速化を推奨
+          channel: 'stable' 
+          cache: true
       - name: flutter doctor
         run: flutter doctor -v
       - name: flutter pub get
