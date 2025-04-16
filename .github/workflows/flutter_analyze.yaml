@@ -4,30 +4,22 @@ on:
   push:
     branches:
       - main
-
   pull_request:
     branches:
       - main
 
 jobs:
   lint:
-    strategy:
-      matrix:
-        os: [macos-12]
-        flutter-version: ['3.24.1']
-        flutter-channel: [stable]
-
-    name: flutter_analyze
-    runs-on: ${{ matrix.os }}
+    name: flutter_analyze_and_test
+    runs-on: macos-latest
     steps:
       - name: set up repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: set up flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: ${{ matrix.flutter-version }}
-          channel: ${{ matrix.flutter-channel }}
-          cache: false
+          channel: 'stable'      # 例: 使用したいチャンネルを指定
+          cache: true            # キャッシュを有効にして高速化を推奨
       - name: flutter doctor
         run: flutter doctor -v
       - name: flutter pub get
